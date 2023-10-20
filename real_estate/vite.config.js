@@ -4,12 +4,10 @@ import react from '@vitejs/plugin-react'
 // https://vitejs.dev/config/
 export default defineConfig({
   server: {
-
     https: {
-      
-      key: '',
-      cert: ''
-    }
+      key: './real_estate-privateKey.key',
+      cert: './real_estate.crt',
+    } 
   },
   plugins: [react()],
 })
