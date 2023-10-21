@@ -1,8 +1,7 @@
 import React from 'react';
-import { AiOutlineSearch } from 'react-icons/ai';
 
-const images = ['Images/bg.jpg', 'Images/bg.jpg', 'Images/bg.jpg'];
-const Home = () => {
+const DetailedView = () => {
+
     const list = [
         {dept_name : "CSE",dept_admin_name:"Name",total_courses: 10,total_ta_needed: 100,total_ta_alloted: 72,ta_lef:28},
         {dept_name : "CB",dept_admin_name:"Name",total_courses: 10,total_ta_needed: 100,total_ta_alloted: 72,ta_lef:28},
@@ -12,25 +11,45 @@ const Home = () => {
         {dept_name : "SSH",dept_admin_name:"Name",total_courses: 10,total_ta_needed: 100,total_ta_alloted: 72,ta_lef:28},
     
     ]
+
     return (
-        <div className='mx-10 mt-2'>
-            <div className="relative">
-                <img className="w-screen h-[350px] blur-[6px] rounded-sm" src="Images/bg.jpg" alt="" />
-                {/* <div className="absolute top-0 left-0 w-full h-full bg-[#ffdd62] opacity-30"></div>  */}
-                <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center">
-                <input
-                    type="text"
-                    placeholder="Search..."
-                    className="px-4 py-3 rounded-full border border-[#5f41c1]  focus:outline-none w-[500px]"
-                />
-                <button className="absolute right-0 top-1/2 -translate-y-1/2 p-4 bg-[#9041c1] rounded-full search-button">
-                    <AiOutlineSearch />
-                </button>
+        <div className='my-2'>
+            <div className='flex justify-center'>
+                <h1 className='font-bold text-3xl text-[#9041c1] my-2'>Detailed View</h1>
+            </div>
+            <div className="flex p-4 border border-black shadow-xl">
+                <div className="w-1/2 pr-4">
+                    <img src="Images/bg.jpg" alt="Fail to Load" className="max-w-full h-auto rounded-lg" />
+                </div>
+                <div className='border-l border-black'></div>
+                <div className="w-1/2 flex items-center justify-center">
+                    <div className=''>
+                        <div className='flex'>
+                            <h1 className='font-bold text-2xl text-[#9041c1] mx-2'>Seller:</h1>
+                            <h1 className='text-2xl'>Mohit Bansal</h1>
+                        </div>
+                        <div className='flex'>
+                            <h1 className='font-bold text-2xl text-[#9041c1] mx-2'>Location:</h1>
+                            <h1 className='text-2xl'>Delhi</h1>
+                        </div>
+                        <div className='flex'>
+                            <h1 className='font-bold text-2xl text-[#9041c1] mx-2'>Price:</h1>
+                            <h1 className='text-2xl'>&#8377; 5cr</h1>
+                        </div>
+                        <div className='flex mt-8'>
+                            <button className='rounded-lg bg-[#9041c1] py-2 px-4 text-white mr-3'>
+                                Buy
+                            </button>
+                            <button className='rounded-lg bg-[#9041c1] py-2 px-4 text-white'>
+                                Report Seller
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div className='mt-3'>
                 <h1 className='font-bold text-2xl text-[#9041c1] mx-2'>Recommanded:</h1>
-                <div className="grid lg:grid-cols-3 md:grid-cols-1 my-2 p-8 gap-6">
+                <div className="grid lg:grid-cols-3 md:grid-cols-1 p-8 gap-6">
                     {list.map((item, index)=>(
                         <div key={index} className="w-[270px] h-[270px] border border-gray-300 hover:shadow-lg transition-transform transform hover:scale-105 rounded-lg flex flex-col">
                             <div className="h-[100px] w-full bg-[#3dafaa] text-white p-4 flex-4 rounded-t-lg">
@@ -50,6 +69,6 @@ const Home = () => {
             </div>
         </div>
     );
-};
+}
 
-export default Home;
+export default DetailedView;
