@@ -25,7 +25,7 @@ const DetailedView = () => {
     return (
         <div className='my-2'>
             <div className='flex justify-center'>
-                <h1 className='font-bold text-3xl text-[#9041c1] my-2'>Detailed View</h1>
+                <h1 className='font-bold text-3xl text-[#9041c1] my-2'>Detailed View:</h1>
             </div>
             <div className="flex p-4 border border-black shadow-xl">
                 <div className="w-1/2 pr-4">
