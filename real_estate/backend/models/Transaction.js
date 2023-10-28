@@ -2,6 +2,12 @@ const mongoose = require('mongoose');
 const {Schema}= mongoose;
 
 const transactionSchema = new Schema({
+    
+    property: {
+      type: Schema.Types.ObjectId,
+      ref: 'property',
+      required: true
+    },
     prevowner: {
       type: Schema.Types.ObjectId,
       ref: 'user',
