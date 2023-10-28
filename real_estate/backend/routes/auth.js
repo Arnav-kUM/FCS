@@ -15,7 +15,7 @@ router.post('/createuser', [
     body('name', 'Name must be atleast 3 characters').isLength({ min: 3 }),
     body('email', 'Enter a valid email').isEmail(),
     body('password', 'Password must be atleast 5 characters').isLength({ min: 5 }),
-    body('mobile','Enter a valid mobile number').isLength(10),
+    body('mobile','Enter a valid mobile number').isLength({ min: 10, max: 10 }),
   ], async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
