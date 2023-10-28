@@ -23,12 +23,12 @@ const propertySchema = new mongoose.Schema({
   },
   seller: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
+    ref: 'user',
     required: true,
   },
   buyer: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
+    ref: 'user',
   },
   status: {
     type: String,
@@ -37,7 +37,7 @@ const propertySchema = new mongoose.Schema({
   },
   reports: [{
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
+    ref: 'user',
   }],
   dateOfListing: {
     type: Date,
