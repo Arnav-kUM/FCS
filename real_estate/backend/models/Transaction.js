@@ -4,12 +4,12 @@ const {Schema}= mongoose;
 const transactionSchema = new Schema({
     prevowner: {
       type: Schema.Types.ObjectId,
-      ref: 'User',
+      ref: 'user',
       required: true
     },
     newowner: {
       type: Schema.Types.ObjectId,
-      ref: 'User',
+      ref: 'user',
       required: true
     },
     amount: {
