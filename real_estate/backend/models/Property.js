@@ -21,31 +21,35 @@ const propertySchema = new mongoose.Schema({
     type: Number,
     required: true,
   },
-  seller: {
+  owner: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'user',
     required: true,
   },
-  buyer: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'user',
+  // buyer: {
+  //   type: mongoose.Schema.Types.ObjectId,
+  //   ref: 'user',
+  // },
+  listing_type: {
+    type: String,
+    enum: ['rent','sell']
   },
   status: {
     type: String,
     enum: ['available', 'sold', 'rented'],
     default: 'available',
   },
-  reports: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'user',
-  }],
+  // reports: [{
+  //   type: mongoose.Schema.Types.ObjectId,
+  //   ref: 'user',
+  // }],
   dateOfListing: {
     type: Date,
     default: Date.now,
-  },
-  dateOfSale: {
-    type: Date,
-  },
+  }
+  // dateOfSale: {
+  //   type: Date,
+  // },
 });
 
 const Property = mongoose.model('property', propertySchema);
