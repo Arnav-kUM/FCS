@@ -26,6 +26,16 @@ const NavBar = () => {
       <ul className="md:flex md:items-center">
         <li className="mx-4">
           <a href="" className="text-xl text-[#9041c1] hover:text-[#ffdd62] duration-500">
+            Seller Menu
+          </a>
+        </li>
+        <li className="mx-4">
+          <a href="" className="text-xl text-[#9041c1] hover:text-[#ffdd62] duration-500">
+            Buyer Menu
+          </a>
+        </li>
+        <li className="mx-4">
+          <a href="" className="text-xl text-[#9041c1] hover:text-[#ffdd62] duration-500">
             ABOUT
           </a>
         </li>
