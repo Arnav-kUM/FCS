@@ -1,6 +1,7 @@
 const connectToMongo = require("./db")
 const express = require('express')
-
+const User= require('./models/Users');
+const property= require('./models/Property');
 connectToMongo();
 const app = express()
 const port = 3000
