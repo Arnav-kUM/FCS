@@ -101,7 +101,7 @@ router.delete('/deleteproperty/:id', fetchuser, async (req, res) => {
     }
 })
 
-// Route 3 delete the listings of the logged in user || logged in required
+// Route 4 update the listings of the logged in user || logged in required
 router.put('/updateproperty/:id', fetchuser, async (req, res) => {
     const { title, description, image,price,listing_type,location } = req.body;
     // const title = req.body
@@ -129,5 +129,18 @@ router.put('/updateproperty/:id', fetchuser, async (req, res) => {
         res.status(500).send("Internal Server Error");
     }
 })
+
+// Route 5 fetch all the available listings 
+router.get('/fetchavailablelistings', async (req, res) => {
+  try {
+      const properties = await Property.find({ listing_type: req.body.type ,status: 'available' });
+      res.json(properties)
+  } catch (error) {
+      console.error(error.message);
+      res.status(500).send("Internal Server Error");
+  }
+  })
+
+
 
 module.exports = router
