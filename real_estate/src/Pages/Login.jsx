@@ -1,19 +1,37 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from 'axios';
 
 const Login = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const navigate = useNavigate();
 
-    const handleSubmit = (e) => {
-        if(email !== "" && password !== ""){
-            navigate("/home");
-        }
-        else{
-            alert("Please enter emailID and password")
+    const handleSubmit = async (e) => {
+        e.preventDefault(); // Prevent the default form submission
+    
+        if (email !== '' && password !== '') {
+            try {
+                const response = await axios.post('http://localhost:3000/api/auth/login', {
+                    email,
+                    password,
+                });
+                if (response.data.success) {
+                    // Successful login, you can store the token in local storage or cookies here
+                    // For example: localStorage.setItem('token', response.data.authtoken);
+                    navigate('/home');
+                } else {
+                    alert('Login failed. Please check your credentials.');
+                }
+            } catch (error) {
+                console.error(error);
+                alert('An error occurred while logging in.');
+            }
+        } else {
+            alert('Please enter email and password');
         }
     };
+    
     return (
         <div className='flex justify-center items-center h-screen'>
             <div className='bg-white border-2 border-[#9041c1] shadow-sm px-4 py-2 rounded-lg'>
