@@ -130,17 +130,17 @@ router.put('/updateproperty/:id', fetchuser, async (req, res) => {
     }
 })
 
-// Route 5 fetch all the available listings 
+// Route 5: Fetch all the available listings
 router.get('/fetchavailablelistings', async (req, res) => {
+  const { type } = req.query; // Use query parameters to get the listing type
   try {
-      const properties = await Property.find({ listing_type: req.body.type ,status: 'available' });
-      res.json(properties)
+    const properties = await Property.find({ listing_type: type, status: 'available' });
+    res.json(properties);
   } catch (error) {
-      console.error(error.message);
-      res.status(500).send("Internal Server Error");
+    console.error(error.message);
+    res.status(500).send("Internal Server Error");
   }
-  })
-
+});
 
 
 module.exports = router
