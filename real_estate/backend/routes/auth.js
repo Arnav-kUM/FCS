@@ -96,15 +96,20 @@ router.post('/createuser', [
   
   
   // ROUTE 3: Get loggedin User Details using: POST "/api/auth/getuser". Login required
-  router.post('/getuser', fetchuser,  async (req, res) => {
-  
+  router.get('/getuser/:id', fetchuser, async (req, res) => {
+    console.log(req.params.id);
     try {
-      const userId = req.user.id;
-      const user = await User.findById(userId).select("-password")
-      res.send(user)
+      const userId = req.params.id; // Use the ID from the request parameters
+      const user = await User.findById(userId).select('-password');
+  
+      if (!user) {
+        return res.json({ message: 'User not found' });
+      }
+  
+      res.json(user);
     } catch (error) {
       console.error(error.message);
-      res.status(500).send("Internal Server Error");
+      res.status(500).send('Internal Server Error');
     }
-  })
+  });
   module.exports = router

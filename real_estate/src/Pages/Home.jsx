@@ -22,8 +22,8 @@ const Home = () => {
     }
   };
 
-  const handleViewDetails = () => {
-    navigate("/details");
+  const handleViewDetails = (propertyId) => {
+    navigate(`/details/${propertyId}`);
   }
 
   return (
@@ -31,7 +31,7 @@ const Home = () => {
       <NavBar />
       <div className='mx-10 mt-2'>
         <div className="relative">
-          <img className="w-screen h-[350px] blur-[4px] rounded-sm" src="Images/bg.jpg" alt="" />
+          <img className="w-screen h-[350px] blur-[4px] rounded-sm" src="/Images/bg.jpg" alt="" />
           <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center">
             <input
               type="text"
@@ -47,7 +47,7 @@ const Home = () => {
         <div className="flex flex-wrap justify-around mt-2">
           {recommendedProperties.map((property, index) => (
             <div key={index} className="bg-white p-3 rounded-lg shadow-md w-[30%] mb-4 border border-[#9041c1]">
-              <img className='rounded-lg' src='Images/bg.jpg' alt="Failed to Load" />
+              <img className='rounded-lg' src='/Images/bg.jpg' alt="Failed to Load" />
               <div className='flex justify-center'>
                 <p className='mx-1 font-bold'>{property.title}</p>
                 <p>|</p>
@@ -59,7 +59,7 @@ const Home = () => {
                 {/* You can add more property details here */}
               </div>
               <div className='flex justify-center'>
-                <button className="bg-[#9041c1] text-white py-2 px-4 rounded-md mt-2" onClick={handleViewDetails}>
+                <button className="bg-[#9041c1] text-white py-2 px-4 rounded-md mt-2" onClick={() => handleViewDetails(property._id)}>
                   View Details
                 </button>
               </div>

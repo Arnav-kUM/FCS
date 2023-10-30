@@ -142,5 +142,19 @@ router.get('/fetchavailablelistings', async (req, res) => {
   }
 });
 
+// Route 6: Fetch a property by ID
+router.get('/fetchproperty/:id', async (req, res) => {
+  try {
+    const property = await Property.findById(req.params.id);
+    if (!property) {
+      return res.json({ message: 'Property not found' });
+    }
+    res.json(property);
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).send("Internal Server Error");
+  }
+});
+
 
 module.exports = router
