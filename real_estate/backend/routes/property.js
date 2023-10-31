@@ -1,7 +1,9 @@
 const express = require('express');
 const User = require('../models/Users');
+const Contract = require('../models/Contract')
 const router = express.Router();
 const { body, validationResult } = require('express-validator');
+const crypto = require('crypto');
 
 const bcrypt = require('bcryptjs');
 var jwt = require('jsonwebtoken');
@@ -130,11 +132,16 @@ router.put('/updateproperty/:id', fetchuser, async (req, res) => {
     }
 })
 
-// Route 5: Fetch all the available listings
 router.get('/fetchavailablelistings', async (req, res) => {
-  const { type } = req.query; // Use query parameters to get the listing type
+  const { type } = req.query;
   try {
-    const properties = await Property.find({ listing_type: type, status: 'available' });
+    let query = { status: 'available' };
+
+    if (type) {
+      query.listing_type = type;
+    }
+
+    const properties = await Property.find(query);
     res.json(properties);
   } catch (error) {
     console.error(error.message);
@@ -142,17 +149,92 @@ router.get('/fetchavailablelistings', async (req, res) => {
   }
 });
 
-// Route 6: Fetch a property by ID
 router.get('/fetchproperty/:id', async (req, res) => {
   try {
     const property = await Property.findById(req.params.id);
+
     if (!property) {
       return res.json({ message: 'Property not found' });
     }
-    res.json(property);
+
+    const owner = await User.findById(property.owner);
+
+    if (owner) {
+      // Create a new object with the owner's name
+      const propertyWithOwnerName = {
+        ...property.toObject(),
+        ownerName: owner.name,
+      };
+
+      res.json(propertyWithOwnerName);
+    } else {
+      // Fallback to 'Unknown' if owner not found
+      property.ownerName = 'Unknown';
+      res.json(property);
+    }
   } catch (error) {
     console.error(error.message);
     res.status(500).send("Internal Server Error");
+  }
+});
+const sign_function = (data, privateKey) => {
+  privateKey = crypto.createPrivateKey({
+      key: Buffer.from(privateKey, 'base64'),
+      format: 'der',
+      type: 'pkcs8'
+  });
+  const signer = crypto.createSign('SHA256');
+  signer.update(data);
+  signer.end();
+
+  const signature = signer.sign(privateKey, 'base64');
+  return signature;
+};
+
+// Route 7: Book a property with signing
+router.post('/bookproperty/:id', async (req, res) => {
+  try {
+      const property = await Property.findById(req.params.id);
+
+      if (!property) {
+          return res.json({ message: 'Property not found' });
+      }
+
+      // Fetch the buyer's private key based on their user ID (assumes you have implemented this logic)
+      const buyerId = req.body.buyer; // Get the buyer's user ID from the request
+      const buyer = await User.findById(buyerId);
+
+      if (!buyer || !buyer.privateKey) {
+          return res.json({ message: 'Buyer not found or private key missing' });
+      }
+
+      const buyerPrivateKey = buyer.privateKey; // Get the buyer's private key
+
+      // Create the contract data
+      const contractData = {
+          seller: property.owner, // Set the seller to the property's owner
+          buyer: req.body.buyer, // Set the buyer based on your authentication or request data
+          property: property._id, // Set the property to the booked property
+          type: req.body.type, // Set the type (rent or buy) based on your form or request data
+          terms: req.body.terms, // Set the contract terms based on your form or request data
+      };
+
+      // Use the private key to sign the contract data
+      const signature = sign_function(JSON.stringify(contractData), buyerPrivateKey);
+
+      // Include the contract data and the signature in the contract object
+      const contract = new Contract({
+          ...contractData,
+          signature: signature, // Include the signature in the contract
+      });
+      // Save the signed contract to the database
+      await contract.save();
+
+      // You can perform additional actions, such as updating the property's status here
+      res.json({ message: 'Property booked successfully', contract });
+  } catch (error) {
+      console.error(error.message);
+      res.status(500).send("Internal Server Error");
   }
 });
 

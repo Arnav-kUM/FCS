@@ -14,7 +14,7 @@ const Home = () => {
 
   const getRecommendedProperties = async () => {
     try {
-        const response = await axios.get(`http://localhost:3000/api/property/fetchavailablelistings?type=sell`);
+        const response = await axios.get(`http://localhost:3000/api/property/fetchavailablelistings`);
       console.log(response.data)
       setRecommendedProperties(response.data);
     } catch (error) {

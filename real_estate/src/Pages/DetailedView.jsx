@@ -5,48 +5,45 @@ import axios from 'axios';
 const DetailedView = () => {
 
     const { propertyId } = useParams();
-    const [owner, setOwner] = useState();
     const [propertyDetails, setPropertyDetails] = useState([]);
-    const [recommendedProperties, setRecommendedProperties] = useState([]);
 
-    const navigate = useNavigate();
-    const handleViewDetails = (propertyId) => {
-        navigate(`/details/${propertyId}`);
-    }
     const fetchPropertyDetails = async () => {
         try {
           const response = await axios.get(`http://localhost:3000/api/property/fetchproperty/${propertyId}`);
           setPropertyDetails(response.data);
+          console.log(propertyDetails)
         } catch (error) {
           console.error(error);
         }
     };
-    const getRecommendedProperties = async () => {
-        try {
-            const response = await axios.get(`http://localhost:3000/api/property/fetchavailablelistings?type=sell`);
-          setRecommendedProperties(response.data);
-        } catch (error) {
-          console.error(error);
-        }
-      };
-
     useEffect(() => {
-        window.scrollTo(0, 0); getRecommendedProperties();
+        console.log(propertyId)
         if (propertyId) {
             fetchPropertyDetails();
         }
     }, [propertyId]);
 
-    useEffect(() => {
-        if (propertyDetails.owner) {
-            const ownerName = axios.get(`http://localhost:3000/api/auth/getuser/${propertyDetails.owner}`);
-            ownerName.then((response) => {
-                setOwner(response.data);
-            }).catch((error) => {
-                console.error(error);
-            });
-        }
-    }, [propertyDetails.owner]);
+    // Handle the "Book Property" button click event
+const handleBookProperty = async () => {
+    // Prepare the contract data
+    const contractData = {
+      buyer: '653cd19698befad48745c74a', // Replace with the actual buyer's ID
+      type: 'buy', // Replace with the appropriate type (buy or rent)
+      terms: 'Your contract terms here', // Replace with the contract terms
+    };
+  
+    try {
+      // Make a POST request to book the property
+      const response = await axios.post(`http://localhost:3000/api/property/bookproperty/${propertyId}`, contractData);
+  
+      // Handle the response, show success or error message to the user
+      console.log(response.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+  
+
 
     return (
         <div className='my-2'>
@@ -63,7 +60,7 @@ const DetailedView = () => {
                     <h1 className='font-bold text-2xl text-[#9041c1] mx-2'>{propertyDetails.title}</h1>
                         <div className='flex'>
                             <h1 className='font-bold text-2xl text-[#9041c1] mx-2'>Seller:</h1>
-                            <h1 className='text-2xl'>{owner}</h1>
+                            <h1 className='text-2xl'>{propertyDetails.ownerName}</h1>
                         </div>
                         <div className='flex'>
                             <h1 className='font-bold text-2xl text-[#9041c1] mx-2'>Location:</h1>
@@ -90,7 +87,7 @@ const DetailedView = () => {
                             <h1 className='text-2xl'>$ {propertyDetails.price}</h1>
                         </div>
                         <div className='flex mt-8'>
-                            <button className='rounded-lg bg-[#9041c1] py-2 px-4 text-white mr-3'>
+                            <button className='rounded-lg bg-[#9041c1] py-2 px-4 text-white mr-3' onClick={handleBookProperty}>
                                 Book
                             </button>
                             <button className='rounded-lg bg-[#9041c1] py-2 px-4 text-white'>
@@ -99,29 +96,6 @@ const DetailedView = () => {
                         </div>
                     </div>
                 </div>
-            </div>
-            <h1 className='font-bold text-2xl text-[#9041c1] mx-2 mt-4'>Recommended:</h1>
-            <div className="flex flex-wrap justify-around mt-2">
-                {recommendedProperties.map((property, index) => (
-                    <div key={index} className="bg-white p-3 rounded-lg shadow-md w-[30%] mb-4 border border-[#9041c1]">
-                    <img className='rounded-lg' src='/Images/bg.jpg' alt="Failed to Load" />
-                    <div className='flex justify-center'>
-                        <p className='mx-1 font-bold'>{property.title}</p>
-                        <p>|</p>
-                        <p className='mx-1 font-bold'>{property.location}</p>
-                        <p>|</p>
-                        <p className='mx-1 font-bold'>Price: ${property.price}</p>
-                        <p>|</p>
-                        <p className='mx-1 font-bold'>Listing Type: {property.listing_type}</p>
-                        {/* You can add more property details here */}
-                    </div>
-                    <div className='flex justify-center'>
-                        <button className="bg-[#9041c1] text-white py-2 px-4 rounded-md mt-2" onClick={() => handleViewDetails(property._id)}>
-                        View Details
-                        </button>
-                    </div>
-                    </div>
-                ))}
             </div>
         </div>
     );
