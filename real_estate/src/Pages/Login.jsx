@@ -9,6 +9,7 @@ const Login = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault(); // Prevent the default form submission
+      
     
         if (email !== '' && password !== '') {
             try {
@@ -17,8 +18,11 @@ const Login = () => {
                     password,
                 });
                 if (response.data.success) {
+                    console.log("hello")
                     // Successful login, you can store the token in local storage or cookies here
                     // For example: localStorage.setItem('token', response.data.authtoken);
+                    localStorage.setItem('token', response.data.authtoken);
+                    console.log(response.data.authtoken)
                     navigate('/home');
                 } else {
                     alert('Login failed. Please check your credentials.');

@@ -177,10 +177,11 @@ router.get('/fetchproperty/:id', async (req, res) => {
     res.status(500).send("Internal Server Error");
   }
 });
+
 const sign_function = (data, privateKey) => {
   privateKey = crypto.createPrivateKey({
       key: Buffer.from(privateKey, 'base64'),
-      format: 'der',
+      format: 'pem',
       type: 'pkcs8'
   });
   const signer = crypto.createSign('SHA256');

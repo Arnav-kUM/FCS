@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-
+import { jwtDecode } from "jwt-decode";
 const DetailedView = () => {
 
     const { propertyId } = useParams();
@@ -25,9 +25,14 @@ const DetailedView = () => {
 
     // Handle the "Book Property" button click event
 const handleBookProperty = async () => {
-    // Prepare the contract data
-    const contractData = {
-      buyer: '653cd19698befad48745c74a', // Replace with the actual buyer's ID
+    const token = localStorage.getItem('token');
+  const decodedToken = jwtDecode(token);
+  const userId = decodedToken.user.id;
+  console.log(userId)
+
+  // Prepare the contract data
+  const contractData = {
+    buyer: userId, // Use the ex/ Replace with the actual buyer's ID
       type: 'buy', // Replace with the appropriate type (buy or rent)
       terms: 'Your contract terms here', // Replace with the contract terms
     };
