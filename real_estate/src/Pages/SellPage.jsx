@@ -1,17 +1,36 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Modal from "react-modal";
-import sellingHistoryData from "../assets/sell.json";
+import axios from 'axios';
+import { jwtDecode } from "jwt-decode";
 
 const SellingHistory = () => {
-  const [isModalOpen, setModalOpen] = useState(false);
+  const [userProperties, setUserProperties] = useState([]);
+  const [isModalOpen, setModalOpen] = useState(false); // Define isModalOpen state
   const [newProperty, setNewProperty] = useState({
-    title: "New Property",
+    title: "",
     price: 0,
     location: "",
-    seller: "",
-    dateOfListing: new Date().toISOString().substring(0, 10),
-    listingType: "sale", // Default listing type
+    listing_type: "",
+    description: "",
+    status: ""
   });
+  const fetchUserProperties = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const decodedToken = jwtDecode(token);
+      const userId = decodedToken.user.id; 
+      const response = await axios.get(`http://localhost:3000/api/property/fetchmylistings?userId=${userId}`);
+      setUserProperties(response.data);
+      console.log(response.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+// Call the fetchUserProperties function when the component mounts or whenever the user logs in
+useEffect(() => {
+    fetchUserProperties();
+}, []);
 
   const openModal = () => {
     setModalOpen(true);
@@ -21,12 +40,50 @@ const SellingHistory = () => {
     setModalOpen(false);
   };
 
-  const handleAddProperty = () => {
-    // Add the new property to your data source or send it to your backend
-    console.log("New Property:", newProperty);
-    // You can add your logic to update the data source here
-    closeModal();
+  const handleAddProperty = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const decodedToken = jwtDecode(token);
+      const userId = decodedToken.user.id;
+      const response = await axios.post(
+        "http://localhost:3000/api/property/addnew",
+        {
+          title: newProperty.title,
+          description: newProperty.description,
+          // images: newProperty.images,
+          location: newProperty.location,
+          price: newProperty.price,
+          owner: userId,
+          listing_type: newProperty.listing_type,
+          status: newProperty.status,
+        }
+      );
+      console.log("New Property added:", response.data);
+      // Update user properties after adding new property
+      // fetchUserProperties();
+      closeModal();
+    } catch (error) {
+      console.error(error);
+    }
   };
+
+  const handleDeleteProperty = async (propertyId) => {
+    try {
+      const token = localStorage.getItem('token');
+      const decodedToken = jwtDecode(token);
+      const userId = decodedToken.user.id;
+  
+      const response = await axios.delete(`http://localhost:3000/api/property/deleteproperty/${propertyId}?userId=${userId}`);
+  
+      console.log("Property deleted:", response.data);
+      // Refresh user properties after deleting a property
+      fetchUserProperties();
+    } catch (error) {
+      console.error(error);
+    }
+  };
+  
+  
 
   return (
     <div className="container mx-auto py-6">
@@ -45,20 +102,25 @@ const SellingHistory = () => {
             <th className="py-2 px-4 text-left">Property Name</th>
             <th className="py-2 px-4 text-left">Price</th>
             <th className="py-2 px-4 text-left">Location</th>
-            <th className="py-2 px-4 text-left">Buyer</th>
+            <th className="py-2 px-4 text-left">Description</th>
             <th className="py-2 px-4 text-left">Date of Listing</th>
-            <th className="py-2 px-4 text-left">Date of Selling</th>
+            <th className="py-2 px-4 text-left">Listing Type</th>
+            <th className="py-2 px-4 text-left">Action</th>
           </tr>
         </thead>
         <tbody>
-          {sellingHistoryData.map((property, index) => (
+          {userProperties.map((property, index) => (
             <tr key={index}>
               <td className="py-2 px-4">{property.title}</td>
               <td className="py-2 px-4">{property.price}</td>
               <td className="py-2 px-4">{property.location}</td>
-              <td className="py-2 px-4">{property.buyer}</td>
+              <td className="py-2 px-4">{property.description}</td>
               <td className="py-2 px-4">{property.dateOfListing}</td>
-              <td className="py-2 px-4">{property.dateOfSale}</td>
+              <td className="py-2 px-4">{property.listing_type}</td>
+              <td className="py-2 px-4">
+                <button className="bg-blue-500 text-white rounded-lg px-2" onClick={() => handleEdit(property)}>Edit</button>
+                <button className="bg-red-500 text-white rounded-lg px-2 ml-2" onClick={() => handleDeleteProperty(property._id)}>Delete</button>
+              </td>
             </tr>
           ))}
         </tbody>
@@ -72,7 +134,7 @@ const SellingHistory = () => {
         overlayClassName="modal-overlay"
       >
         <h2>Add Property</h2>
-        <form>
+        <form className="mt-2">
           <input
             type="text"
             placeholder="Title"
@@ -101,25 +163,52 @@ const SellingHistory = () => {
               setNewProperty({ ...newProperty, location: e.target.value })
             }
           />
-          <div>
+          <input
+            type="text"
+            placeholder="Description"
+            value={newProperty.description}
+            onChange={(e) =>
+              setNewProperty({ ...newProperty, description: e.target.value })
+            }
+          />
+          <div className="flex mt-2">
+            <div className="mr-4">
+              <label>
+                Listing Type:
+                <select
+                  value={newProperty.listing_type}
+                  onChange={(e) =>
+                    setNewProperty({
+                      ...newProperty,
+                      listing_type: e.target.value,
+                    })
+                  }
+                >
+                  <option value="sell">sell</option>
+                  <option value="rent">rent</option>
+                </select>
+              </label>
+            </div>
+            <div>
             <label>
-              Listing Type:
+              Status:
               <select
-                value={newProperty.listingType}
+                value={newProperty.status}
                 onChange={(e) =>
                   setNewProperty({
                     ...newProperty,
-                    listingType: e.target.value,
+                    status: e.target.value,
                   })
                 }
               >
-                <option value="sale">For Sale</option>
-                <option value="rent">For Rent</option>
+                <option value="Available">Available</option>
+                <option value="Unavailable">Unavailable</option>
               </select>
             </label>
+            </div>
           </div>
-          <button onClick={handleAddProperty}>Add Property</button>
-          <button onClick={closeModal}>Cancel</button>
+          <button className="bg-green-500 rounded-lg p-2 m-2" onClick={handleAddProperty}>Add Property</button>
+          <button className="bg-red-500 rounded-lg p-2 m-2" onClick={closeModal}>Cancel</button>
         </form>
       </Modal>
     </div>
