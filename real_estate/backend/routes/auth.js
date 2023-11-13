@@ -97,7 +97,7 @@ router.post('/createuser', [
   
   
   // ROUTE 3: Get loggedin User Details using: POST "/api/auth/getuser". Login required
-  router.get('/getuser/:id', fetchuser, async (req, res) => {
+  router.get('/getuser', fetchuser, async (req, res) => {
     console.log(req.params.id);
     try {
       const userId = req.params.id; // Use the ID from the request parameters
