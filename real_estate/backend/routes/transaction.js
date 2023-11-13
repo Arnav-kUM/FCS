@@ -10,7 +10,7 @@ const User = require('../models/Users');
 const JWT_SECRET = 'armoni@Yu';
 
 router.post('/newtransaction/:id', fetchuser,  async (req, res) => {
-    
+
     try {
         const nu=req.user.id;
         const pid=req.params.id;
