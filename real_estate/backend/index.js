@@ -13,6 +13,7 @@ app.use('/api/auth',require('./routes/auth'))
 app.use('/api/property',require('./routes/property'))
 app.use('/api/transaction',require('./routes/transaction'))
 app.use('/api/contract',require('./routes/contract'))
+app.use('/api/contract',require('./routes/payment'))
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
 })
