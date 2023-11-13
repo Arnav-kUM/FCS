@@ -12,75 +12,72 @@ const Property = require('../models/Property');
 const JWT_SECRET = 'armoni@Yu';
 
 // ROUTE 1: Get loggedin User to add property Details using: POST "/api/property/addnew" || Login required
-router.post('/addnew', [
-    body('title').custom((value, { req }) => {
-        if (!value || value.length < 3) {
-          throw new Error('Title should be at least 3 characters long.');
-        }
-        return true;
-      }),
+router.post('/addnew', fetchuser, [
+  body('title').custom((value, { req }) => {
+      if (!value || value.length < 3) {
+        throw new Error('Title should be at least 3 characters long.');
+      }
+      return true;
+    }),
+  
+    body('description').custom((value, { req }) => {
+      if (value && value.length > 50) {
+        throw new Error('Description should not exceed 50 characters.');
+      }
+      return true;
+    }),
+  
+    body('images', 'Images should be an array if provided.')
+      .optional(),
+    body('location').custom((value, { req }) => {
+      if (!value || value.length < 3) {
+        throw new Error('Location should be at least 5 characters long.');
+      }
+      return true;
+    }),
+  
+    body('price').custom((value, { req }) => {
+      if (!value || isNaN(value)) {
+        throw new Error('Enter a valid price');
+      }
+      return true;
+    }),
     
-      body('description').custom((value, { req }) => {
-        if (value && value.length > 50) {
-          throw new Error('Description should not exceed 50 characters.');
-        }
-        return true;
-      }),
-    
-      body('images', 'Images should be an array if provided.')
-        .optional(),
-
-      body('location').custom((value, { req }) => {
-        if (!value || value.length < 3) {
-          throw new Error('Location should be at least 5 characters long.');
-        }
-        return true;
-      }),
-    
-      body('price').custom((value, { req }) => {
-        if (!value || isNaN(value)) {
-          throw new Error('Enter a valid price');
-        }
-        return true;
-      }),
-      
-      body('listing_type').custom((value, { req }) => {
-        if (!['rent', 'sell'].includes(value)) {
-          throw new Error('Listing type should be either: rent OR sell');
-        }
-        return true;
-      }),
-  ],  async (req, res) => {
-    const errors = validationResult(req);
-
-    if (!errors.isEmpty()) {
-        console.log(errors.array());
-        return res.status(400).json({ errors: errors.array() });
-    }
-    try {
-      const property = await Property.create({
-        title: req.body.title,
-        description: req.body.description || null,
-        images:req.body.images || null,
-        location:req.body.location,
-        price: req.body.price,
-        owner: req.body.owner,
-        listing_type: req.body.listing_type,
-        status: "available"
-      });
-      res.send(property)
-      console.log("Added successfully");
-    } catch (error) {
-      console.error(error.message);
-      res.status(500).send("Internal Server Error");
-    }
-  })
+    body('listing_type').custom((value, { req }) => {
+      if (!['rent', 'sell'].includes(value)) {
+        throw new Error('Listing type should be either: rent OR sell');
+      }
+      return true;
+    }),
+],  async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+      console.log(errors.array());
+      return res.status(400).json({ errors: errors.array() });
+  }
+  try {
+    const property = await Property.create({
+      title: req.body.title,
+      description: req.body.description || null,
+      images:req.body.images || null,
+      location:req.body.location,
+      price: req.body.price,
+      owner: req.user.id,
+      listing_type: req.body.listing_type,
+      status: "available"
+    });
+    res.send(property)
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).send("Internal Server Error");
+  }
+})
 
 // Route 2 fetch the listings of the logged in user || logged in required
-router.get('/fetchmylistings', async (req, res) => {
+router.get('/fetchmylistings', fetchuser, async (req, res) => {
   try {
-    const userId = req.query.userId; // Extract the user ID from the request query
-    const properties = await Property.find({ owner: userId });
+    
+    const properties = await Property.find({ owner: req.user.id });
     res.json(properties);
   } catch (error) {
     console.error(error.message);
@@ -89,31 +86,25 @@ router.get('/fetchmylistings', async (req, res) => {
 });
 
 
-// Route 3 delete the listings of the logged in user || logged in required
-router.delete('/deleteproperty/:id', async (req, res) => {
-  try {
-      const userId = req.query.userId; // Get the userId from the query parameter
-      let property = await Property.findById(req.params.id);
-      if (!property) {
-          return res.status(404).send("Not Found");
-      }
 
-      // Ensure that the property owner matches the logged-in user
-      if (property.owner.toString() !== userId) {
+// Route 3 delete the listings of the logged in user || logged in required
+router.delete('/deleteproperty/:id', fetchuser, async (req, res) => {
+  try {
+      let property = await Property.findById(req.params.id);
+      if (!property) { return res.status(404).send("Not Found") }
+      if (property.owner.toString() !== req.user.id) {
           return res.status(401).send("Not Allowed");
       }
-
-      property = await Property.findByIdAndDelete(req.params.id);
+      property = await Property.findByIdAndDelete(req.params.id)
       res.json({ "Success": "Property has been deleted", property: property });
   } catch (error) {
       console.error(error.message);
       res.status(500).send("Internal Server Error");
   }
-});
-
+})
 
 // Route 4 update the listings of the logged in user || logged in required
-router.put('/updateproperty/:id', fetchuser, async (req, res) => {
+router.put('/updateproperty/:id', async (req, res) => {
     const { title, description, image,price,listing_type,location } = req.body;
     // const title = req.body
     // console.log(description);
@@ -130,7 +121,7 @@ router.put('/updateproperty/:id', fetchuser, async (req, res) => {
         // Find the Property to be updated and update it
         let property = await Property.findById(req.params.id);
         if (!property) { return res.status(404).send("Not Found") }
-        if (property.owner.toString() !== req.user.id) {
+        if (property.owner.toString() !== req.body.owner) {
             return res.status(401).send("Not Allowed");
         }
         property = await Property.findByIdAndUpdate(req.params.id, { $set: newProperty }, { new: true })

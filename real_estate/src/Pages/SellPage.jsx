@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Modal from "react-modal";
 import axios from 'axios';
-import { jwtDecode } from "jwt-decode";
 
 const SellingHistory = () => {
   const [userProperties, setUserProperties] = useState([]);
@@ -10,22 +9,31 @@ const SellingHistory = () => {
     title: "",
     price: 0,
     location: "",
-    listing_type: "",
+    listing_type: "sell",
     description: "",
     status: ""
   });
   const fetchUserProperties = async () => {
     try {
       const token = localStorage.getItem('token');
-      const decodedToken = jwtDecode(token);
-      const userId = decodedToken.user.id; 
-      const response = await axios.get(`http://localhost:3000/api/property/fetchmylistings?userId=${userId}`);
-      setUserProperties(response.data);
-      console.log(response.data);
+      const response = await fetch('http://localhost:3000/api/property/fetchmylistings', {
+        method: 'GET',
+        headers: {
+          'auth-token': token
+        }
+      });
+  
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+  
+      const data = await response.json(); // Convert the response to JSON
+      setUserProperties(data);
+      console.log(data);
     } catch (error) {
       console.error(error);
     }
-  };
+  }; 
 
 // Call the fetchUserProperties function when the component mounts or whenever the user logs in
 useEffect(() => {
@@ -43,37 +51,41 @@ useEffect(() => {
   const handleAddProperty = async () => {
     try {
       const token = localStorage.getItem('token');
-      const decodedToken = jwtDecode(token);
-      const userId = decodedToken.user.id;
       const response = await axios.post(
         "http://localhost:3000/api/property/addnew",
         {
           title: newProperty.title,
           description: newProperty.description,
-          // images: newProperty.images,
           location: newProperty.location,
           price: newProperty.price,
-          owner: userId,
           listing_type: newProperty.listing_type,
           status: newProperty.status,
+        },
+        {
+          headers: {
+            'auth-token': token,
+          },
         }
       );
       console.log("New Property added:", response.data);
-      // Update user properties after adding new property
+      // Update user properties after adding a new property
       // fetchUserProperties();
       closeModal();
     } catch (error) {
       console.error(error);
     }
-  };
+  }; 
 
   const handleDeleteProperty = async (propertyId) => {
     try {
-      const token = localStorage.getItem('token');
-      const decodedToken = jwtDecode(token);
-      const userId = decodedToken.user.id;
-  
-      const response = await axios.delete(`http://localhost:3000/api/property/deleteproperty/${propertyId}?userId=${userId}`);
+      const token = localStorage.getItem('token'); 
+      const response = await axios.delete(`http://localhost:3000/api/property/deleteproperty/${propertyId}`,
+      {
+        headers: {
+          'auth-token': token,
+        },
+      }
+      );
   
       console.log("Property deleted:", response.data);
       // Refresh user properties after deleting a property
@@ -177,7 +189,7 @@ useEffect(() => {
                 Listing Type:
                 <select
                   value={newProperty.listing_type}
-                  onChange={(e) =>
+                  onChange={(e) => 
                     setNewProperty({
                       ...newProperty,
                       listing_type: e.target.value,
