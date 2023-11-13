@@ -26,10 +26,10 @@ const NavBar = () => {
       </div>
       <ul className="md:flex md:items-center">
         <li className="mx-4">
-          <Link to="/sell" className="text-xl text-[#9041c1] hover:text-[#ffdd62] duration-500">Seller Menu</Link>
+          <Link to="/sell" className="text-xl text-[#9041c1] hover:text-[#ffdd62] duration-500">My Properties</Link>
         </li>
         <li className="mx-4">
-          <Link to="/buy" className="text-xl text-[#9041c1] hover:text-[#ffdd62] duration-500">Buyer Menu</Link>
+          <Link to="/transaction" className="text-xl text-[#9041c1] hover:text-[#ffdd62] duration-500">Transactions</Link>
         </li>
         <li className="mx-4">
           <Link to="/about" className="text-xl text-[#9041c1] hover:text-[#ffdd62] duration-500">ABOUT</Link>

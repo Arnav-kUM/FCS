@@ -3,7 +3,7 @@ import Home from './Pages/Home';
 import DetailedView from './Pages/DetailedView';
 import Login from './Pages/Login';
 import SellPage from './Pages/SellPage'
-import BuyPage from './Pages/BuyPage';
+import TransactionPage from './Pages/TransactionPage';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import Auth from './ProtectedRoutes';
 import DashBoard from './Pages/DashBoard';
@@ -16,7 +16,7 @@ function App() {
           <Route element={<Home /> }path='/home'></Route>
           <Route element={ <DetailedView /> } path='/details/:propertyId'></Route>
           <Route element={ <SellPage/> } path='/sell'></Route>
-          <Route element={ <BuyPage/> } path='/buy'></Route>
+          <Route element={ <TransactionPage/> } path='/transaction'></Route>
           <Route element={ <DashBoard/> } path='/dashboard'></Route>
 
         </Routes>
