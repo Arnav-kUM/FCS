@@ -9,6 +9,7 @@ const User = require('../models/Users');
 
 const JWT_SECRET = 'armoni@Yu';
 
+// Route 1: create a new transaction - Login required
 router.post('/newtransaction/:id', fetchuser,  async (req, res) => {
 
     try {
@@ -38,4 +39,17 @@ router.post('/newtransaction/:id', fetchuser,  async (req, res) => {
       res.status(500).send("Internal Server Error");
     }
   })
-  module.exports = router
+
+// Route 2: get all my transactions: Login required 
+router.get('/gettransaction', fetchuser,  async (req, res) => {
+
+  try {
+    const transactions = await Transaction.find({$or: [{ prevowner: req.user.id }, { newowner: req.user.id }]});
+    res.json(transactions);
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).send("Internal Server Error");
+  }
+})
+
+module.exports = router

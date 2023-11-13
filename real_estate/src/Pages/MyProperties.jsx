@@ -33,7 +33,7 @@ const SellingHistory = () => {
     } catch (error) {
       console.error(error);
     }
-  }; 
+  };
 
 // Call the fetchUserProperties function when the component mounts or whenever the user logs in
 useEffect(() => {
@@ -100,7 +100,7 @@ useEffect(() => {
   return (
     <div className="container mx-auto py-6">
       <h1 className="text-2xl font-semibold text-[#9041c1] mb-6">
-        Selling History
+        My Listed Properties
       </h1>
       <button
         className="bg-[#9041c1] text-white py-2 px-4 rounded-lg shadow-md mb-4"

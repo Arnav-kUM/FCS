@@ -84,8 +84,6 @@ router.get('/fetchmylistings', fetchuser, async (req, res) => {
   }
 });
 
-
-
 // Route 3 delete the listings of the logged in user || logged in required
 router.delete('/deleteproperty/:id', fetchuser, async (req, res) => {
   try {
