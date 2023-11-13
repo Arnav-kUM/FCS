@@ -29,6 +29,7 @@ router.post('/newtransaction/:id', fetchuser,  async (req, res) => {
           });
         const newProperty = {};
         newProperty.owner=nu;
+        newProperty.transacted = 'yes';
         if (!property) { return res.status(404).send("Not Found") }
         property = await Property.findByIdAndUpdate(req.params.id, { $set: newProperty }, { new: true })
       res.send(transaction)

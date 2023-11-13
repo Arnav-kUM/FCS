@@ -76,7 +76,7 @@ router.post('/addnew', fetchuser, [
 // Route 2 fetch the listings of the logged in user || logged in required
 router.get('/fetchmylistings', fetchuser, async (req, res) => {
   try {
-    const properties = await Property.find({ owner: req.user.id });
+    const properties = await Property.find({ owner: req.user.id, transacted:'no'});
     res.json(properties);
   } catch (error) {
     console.error(error.message);

@@ -25,7 +25,6 @@ const propertySchema = new mongoose.Schema({
     ref: 'user',
     required: true,
   },
- 
   listing_type: {
     type: String,
     enum: ['rent','sell']
@@ -34,6 +33,11 @@ const propertySchema = new mongoose.Schema({
     type: String,
     enum: ['available', 'sold', 'rented'],
     default: 'available',
+  },
+  transacted: {
+    type: String,
+    enum: ['yes','no'],
+    default: 'no'
   },
   // reports: [{
   //   type: mongoose.Schema.Types.ObjectId,
@@ -49,5 +53,4 @@ const propertySchema = new mongoose.Schema({
 });
 
 const Property = mongoose.model('property', propertySchema);
-
 module.exports = Property;
