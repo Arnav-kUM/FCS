@@ -8,17 +8,16 @@ const Property = require('../models/Property');
 const User = require('../models/Users');
 
 const JWT_SECRET = 'armoni@Yu';
-const express = require("express");
-const Stripe = require("stripe");
-const { Order } = require("../models/Order");
+// const Stripe = require("stripe");
+// const { Order } = require("../models/Order");
 
-require("dotenv").config();
+// require("dotenv").config();
 
-const stripe = Stripe(process.env.STRIPE_KEY);
+// const stripe = Stripe(process.env.STRIPE_KEY);
 
-router.post("/payments",fetchuser, async (req, res) => {
+// router.post("/payments",fetchuser, async (req, res) => {
     
-});
+// });
 
 module.exports = router;
 
