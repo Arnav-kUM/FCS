@@ -21,6 +21,7 @@ const Login = () => {
       
             if (response.data.success) {
               const decodedToken = jwtDecode(response.data.authtoken); // Decode the JWT token
+              localStorage.setItem('token', response.data.authtoken);
               const userData = {
                 role: decodedToken.user['role'],
                 id: decodedToken.user['id'],

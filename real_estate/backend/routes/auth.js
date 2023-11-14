@@ -127,6 +127,26 @@ router.post('/login', [
   });
   module.exports = router
 
+    // ROUTE 4: Get user name using id and using: GET "/api/auth/getuser". Login required
+    router.get('/getuser/:id', fetchuser, async (req, res) => {
+      try {
+        const userId = req.user.id; 
+        if(!userId){
+          return res.status(401).send("Not Allowed");
+        }
+        const user = await User.findById(req.params.id).select('name');
+        if (!user) {
+          return res.json({ message: 'User not found' });
+        }
+        
+        res.json(user);
+      } catch (error) {
+        console.error(error.message);
+        res.status(500).send('Internal Server Error');
+      }
+    });
+    module.exports = router
+
 router.post('/createadmin', [
   body('username', 'Username must be at least 3 characters').isLength({ min: 3 }),
   body('email', 'Enter a valid email').isEmail(),

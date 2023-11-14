@@ -45,7 +45,7 @@ const NavBar = () => {
         {user && user.role === 'user' && (
           <>
             <li className="mx-4">
-              <Link to="/user/myproperty" className="text-xl text-[#9041c1] hover:text-[#ffdd62] duration-500">My Properties</Link>
+              <Link to="/user/myproperty" className="text-xl text-[#9041c1] hover:text-[#ffdd62] duration-500">My Listed Properties</Link>
             </li>
             <li className="mx-4">
               <Link to="/user/transaction" className="text-xl text-[#9041c1] hover:text-[#ffdd62] duration-500">Transactions</Link>

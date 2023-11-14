@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Modal from "react-modal";
 import axios from 'axios';
+import Swal from 'sweetalert2';
 
 const SellingHistory = () => {
   const [userProperties, setUserProperties] = useState([]);
@@ -76,6 +77,23 @@ useEffect(() => {
     }
   }; 
 
+  const deleteAlert = (propertyId) => {
+    Swal.fire({
+      title: 'Are you sure?',
+      text: "You won't be able to revert this!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Yes, delete it!',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        handleDeleteProperty(propertyId);
+        Swal.fire('Deleted!', 'Your data has been deleted.', 'success');
+      }
+    });
+  };
+
   const handleDeleteProperty = async (propertyId) => {
     try {
       const token = localStorage.getItem('token'); 
@@ -131,7 +149,7 @@ useEffect(() => {
               <td className="py-2 px-4">{property.listing_type}</td>
               <td className="py-2 px-4">
                 <button className="bg-blue-500 text-white rounded-lg px-2" onClick={() => handleEdit(property)}>Edit</button>
-                <button className="bg-red-500 text-white rounded-lg px-2 ml-2" onClick={() => handleDeleteProperty(property._id)}>Delete</button>
+                <button className="bg-red-500 text-white rounded-lg px-2 ml-2" onClick={() => deleteAlert(property._id)}>Delete</button>
               </td>
             </tr>
           ))}
