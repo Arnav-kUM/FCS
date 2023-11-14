@@ -26,7 +26,7 @@ router.post('/newtransaction/:id', fetchuser,  async (req, res) => {
             prevowner: ou,
             newowner: nu,
             amount: property.price,
-            type:req.body.type
+            type:property.type
           });
         const newProperty = {};
         newProperty.owner=nu;

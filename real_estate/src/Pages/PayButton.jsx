@@ -6,7 +6,7 @@ const PayButton = () => {
   const { user } = useContext(AuthContext);
   const handleCheckout = () => {
     axios
-      .post(`http://localhost:3000/api/payment/newpayment`)
+      .post('http://localhost:3000/api/payment/newpayment/6553c64efe37c7fe80dea0be')
       .then((response) => {
         if (response.data.url) {
           window.location.href = response.data.url;
