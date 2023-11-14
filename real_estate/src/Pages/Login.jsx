@@ -1,41 +1,53 @@
-import React, { useState } from "react";
+import React, { useState,useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from 'axios';
-
+import AuthContext from "../context/authContext";// Import useNavigate
+import {jwtDecode }from 'jwt-decode'; 
 const Login = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const {login,user} =useContext(AuthContext);
     const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
-        e.preventDefault(); // Prevent the default form submission
+        e.preventDefault();
       
-    
-        if (email !== '' && password !== '') {
-            try {
-                const response = await axios.post('http://localhost:3000/api/auth/login', {
-                    email,
-                    password,
-                });
-                if (response.data.success) {
-                    console.log("hello")
-                    // Successful login, you can store the token in local storage or cookies here
-                    // For example: localStorage.setItem('token', response.data.authtoken);
-                    localStorage.setItem('token', response.data.authtoken);
-                    console.log(response.data.authtoken)
-                    navigate('/home');
-                } else {
-                    alert('Login failed. Please check your credentials.');
-                }
-            } catch (error) {
-                console.error(error);
-                alert('An error occurred while logging in.');
+        if (email && password) {
+          try {
+            const response = await axios.post('http://localhost:3000/api/auth/login', {
+              email,
+              password
+            });
+      
+            if (response.data.success) {
+              const decodedToken = jwtDecode(response.data.authtoken); // Decode the JWT token
+              const userData = {
+                role: decodedToken.user['role'],
+                id: decodedToken.user['id'],
+                // Add other user data as needed
+              };
+              
+              login(userData);
+             
+              if (userData.role === 'admin') {
+                navigate('/admin');
+              } else {
+                navigate('/home');
+              }
+              console.log(user)
+      
+            } else {
+              alert('Login failed. Please check your credentials.');
             }
+          } catch (error) {
+            console.error(error);
+            alert('An error occurred while logging in.');
+          }
         } else {
-            alert('Please enter email and password');
+          alert('Please enter email and password');
         }
-    };
-    
+      };
+      
     return (
         <div className='flex justify-center items-center h-screen'>
             <div className='bg-white border-2 border-[#9041c1] shadow-sm px-4 py-2 rounded-lg'>

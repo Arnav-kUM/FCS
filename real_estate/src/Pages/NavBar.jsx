@@ -1,8 +1,11 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom'; // Import Link from react-router-dom
+import React, { useState, useContext } from 'react';
+import { Link } from 'react-router-dom';
+import AuthContext from '../context/authContext';
 
 const NavBar = () => {
   const [isDropdownOpen, setDropdownOpen] = useState(false);
+  const { user } = useContext(AuthContext);
+  console.log(user)
 
   const toggleDropdown = () => {
     setDropdownOpen(!isDropdownOpen);
@@ -24,19 +27,39 @@ const NavBar = () => {
           </div>
         </span>
       </div>
+
       <ul className="md:flex md:items-center">
-        <li className="mx-4">
-          <Link to="/myproperty" className="text-xl text-[#9041c1] hover:text-[#ffdd62] duration-500">My Properties</Link>
-        </li>
-        <li className="mx-4">
-          <Link to="/transaction" className="text-xl text-[#9041c1] hover:text-[#ffdd62] duration-500">Transactions</Link>
-        </li>
-        <li className="mx-4">
-          <Link to="/about" className="text-xl text-[#9041c1] hover:text-[#ffdd62] duration-500">ABOUT</Link>
-        </li>
-        <li className="mx-4">
-          <Link to="/help" className="text-xl text-[#9041c1] hover:text-[#ffdd62] duration-500">HELP</Link>
-        </li>
+        {user && user.role === 'admin' && (
+          <>
+            <li className="mx-4">
+              <Link to="/admin/dashboard" className="text-xl text-[#9041c1] hover:text-[#ffdd62] duration-500">Admin Dashboard</Link>
+            </li>
+            <li className="mx-4">
+              <Link to="/admin/report" className="text-xl text-[#9041c1] hover:text-[#ffdd62] duration-500">Moderate Listings</Link>
+            </li>
+            <li className="mx-4">
+              <Link to="/admin/verifycontracts" className="text-xl text-[#9041c1] hover:text-[#ffdd62] duration-500">Verify Contracts</Link>
+            </li>
+          </>
+        )}
+
+        {user && user.role === 'user' && (
+          <>
+            <li className="mx-4">
+              <Link to="/myproperty" className="text-xl text-[#9041c1] hover:text-[#ffdd62] duration-500">My Properties</Link>
+            </li>
+            <li className="mx-4">
+              <Link to="/transaction" className="text-xl text-[#9041c1] hover:text-[#ffdd62] duration-500">Transactions</Link>
+            </li>
+            <li className="mx-4">
+              <Link to="/about" className="text-xl text-[#9041c1] hover:text-[#ffdd62] duration-500">ABOUT</Link>
+            </li>
+            <li className="mx-4">
+              <Link to="/help" className="text-xl text-[#9041c1] hover:text-[#ffdd62] duration-500">HELP</Link>
+            </li>
+          </>
+        )}
+
         <div className={`relative ${isDropdownOpen ? 'z-10' : ''}`}>
           <button
             type="button"

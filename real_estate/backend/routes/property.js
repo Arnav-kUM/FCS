@@ -236,5 +236,73 @@ router.post('/bookproperty/:id', async (req, res) => {
   }
 });
 
+// Route to report a property
+router.post('/reportproperty/:propertyId', async (req, res) => {
+  try {
+    const { propertyId } = req.params;
+    const { userId } = req.body;
 
-module.exports = router
+    // Check if the property exists
+    const property = await Property.findById(propertyId);
+    if (!property) {
+      return res.status(404).json({ error: 'Property not found' });
+    }
+
+    // Check if the user has already reported this property
+    if (property.reports.includes(userId)) {
+      return res.status(400).json({ error: 'You have already reported this property' });
+    }
+
+    // Add the user to the list of reports for this property
+    property.reports.push(userId);
+    await property.save();
+
+    res.json({ message: 'Property reported successfully', property });
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).send('Internal Server Error');
+  }
+});
+
+// Route to get the report count for a property
+router.get('/property/:propertyId/reportcount', async (req, res) => {
+  try {
+    const { propertyId } = req.params;
+
+    // Check if the property exists
+    const property = await Property.findById(propertyId);
+    if (!property) {
+      return res.status(404).json({ error: 'Property not found' });
+    }
+
+    const reportCount = property.reports.length;
+
+    res.json({ reportCount });
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).send('Internal Server Error');
+  }
+});
+
+// routes/admin.js
+
+// API to get all properties with more than 0 reports
+
+// API to get all properties with reports
+router.get('/reportedproperties', async (req, res) => {
+  try {
+    const reportedProperties = await Property.find({ reports: { $exists: true, $ne: [] } }, {
+      _id: 1,
+      title: 1,
+      reports: 1,
+    });
+    res.json(reportedProperties);
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).send('Internal Server Error');
+  }
+});
+
+
+
+module.exports = router;

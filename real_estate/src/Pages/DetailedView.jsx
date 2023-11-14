@@ -1,53 +1,65 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { jwtDecode } from "jwt-decode";
-const DetailedView = () => {
+import AuthContext from '../context/authContext'; // Update the path
 
+const DetailedView = () => {
     const { propertyId } = useParams();
     const [propertyDetails, setPropertyDetails] = useState([]);
+    const { user } = useContext(AuthContext);
+    const navigate = useNavigate();
 
     const fetchPropertyDetails = async () => {
         try {
-          const response = await axios.get(`http://localhost:3000/api/property/fetchproperty/${propertyId}`);
-          setPropertyDetails(response.data);
-          console.log(propertyDetails)
+            const response = await axios.get(`http://localhost:3000/api/property/fetchproperty/${propertyId}`);
+            setPropertyDetails(response.data);
         } catch (error) {
-          console.error(error);
+            console.error(error);
         }
     };
+
     useEffect(() => {
-        console.log(propertyId)
         if (propertyId) {
             fetchPropertyDetails();
         }
     }, [propertyId]);
 
-    // Handle the "Book Property" button click event
-const handleBookProperty = async () => {
-    const token = localStorage.getItem('token');
-  const decodedToken = jwtDecode(token);
-  const userId = decodedToken.user.id;
-  console.log(userId)
+    const handleBookProperty = async () => {
+        const userId = user.id;
 
-  // Prepare the contract data
-  const contractData = {
-    buyer: userId, // Use the ex/ Replace with the actual buyer's ID
-      type: 'buy', // Replace with the appropriate type (buy or rent)
-      terms: 'Your contract terms here', // Replace with the contract terms
+        // Prepare the contract data
+        const contractData = {
+            buyer: userId,
+            type: 'buy',
+            terms: 'Your contract terms here',
+        };
+
+        try {
+            // Make a POST request to book the property
+            const response = await axios.post(`http://localhost:3000/api/property/bookproperty/${propertyId}`, contractData);
+
+            // Handle the response, show success or error message to the user
+            console.log(response.data);
+        } catch (error) {
+            console.error(error);
+        }
     };
-  
-    try {
-      // Make a POST request to book the property
-      const response = await axios.post(`http://localhost:3000/api/property/bookproperty/${propertyId}`, contractData);
-  
-      // Handle the response, show success or error message to the user
-      console.log(response.data);
-    } catch (error) {
-      console.error(error);
-    }
-  };
-  
+
+    const handleReportSeller = async () => {
+        try {
+            const userId = user.id;
+
+            // Make a POST request to report the seller
+            const response = await axios.post(`http://localhost:3000/api/property/reportproperty/${propertyId}`, {
+                userId: userId,
+            });
+
+            // Handle the response, show success or error message to the user
+            console.log(response.data);
+        } catch (error) {
+            console.error(error);
+        }
+    };
 
 
     return (
@@ -95,7 +107,7 @@ const handleBookProperty = async () => {
                             <button className='rounded-lg bg-[#9041c1] py-2 px-4 text-white mr-3' onClick={handleBookProperty}>
                                 Book
                             </button>
-                            <button className='rounded-lg bg-[#9041c1] py-2 px-4 text-white'>
+                            <button className='rounded-lg bg-[#9041c1] py-2 px-4 text-white' onClick={handleReportSeller}>
                                 Report Seller
                             </button>
                         </div>

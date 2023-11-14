@@ -39,10 +39,10 @@ const propertySchema = new mongoose.Schema({
     enum: ['yes','no'],
     default: 'no'
   },
-  // reports: [{
-  //   type: mongoose.Schema.Types.ObjectId,
-  //   ref: 'user',
-  // }],
+  reports: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'user',
+  }],
   dateOfListing: {
     type: Date,
     default: Date.now,
