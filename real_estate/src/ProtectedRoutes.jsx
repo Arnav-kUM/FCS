@@ -4,7 +4,6 @@ import AuthContext from './context/authContext';
 
 const ProtectedRoute = ({ element, allowedRoles }) => {
   const { user } = useContext(AuthContext);
-  console.log(user)
 
   // Check if the user has one of the allowed roles
   if (user && allowedRoles.includes(user.role)) {

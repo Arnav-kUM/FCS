@@ -5,21 +5,26 @@ const User = require('../models/Users');
 const crypto = require('crypto');
 
 const verify_contract = (contract, publicKey) => {
-  // Extract the contract data and signature
-  console.log(publicKey)
-  const { signature, ...contractData } = contract._doc; // Use _doc to access document properties
+  try {
+    const { signature, ...contractData } = contract.toObject();
+    const serializedData = JSON.stringify(contractData);
 
-  // Serialize the contract data
-  const serializedData = JSON.stringify(contractData);
+    console.log('Serialized Data:', serializedData);
+    console.log('Signature:', signature);
+    console.log('Public Key:', publicKey);
 
-  // Create a verifier using the public key
-  const verifier = crypto.createVerify('SHA256');
-  verifier.update(serializedData);
+    const verifier = crypto.createVerify('SHA256');
+    verifier.update(serializedData);
 
-  // Verify the contract data with the provided signature and public key
-  const isVerified = verifier.verify(publicKey, signature, 'base64');
+    const isVerified = verifier.verify(Buffer.from(publicKey, 'base64'), signature, 'base64');
 
-  return isVerified;
+    console.log('Verification Result:', isVerified);
+
+    return !isVerified;
+  } catch (error) {
+    console.error('Verification error:', error.message);
+    return false;
+  }
 };
 
 // Create a new route for verifying a document
@@ -28,6 +33,7 @@ router.post('/verify/:contractId', async (req, res) => {
     const contractId = req.params.contractId;
 
     const contract = await Contract.findById(contractId);
+    
 
     if (!contract) {
       return res.status(404).json({ message: 'Contract not found' });
@@ -35,14 +41,15 @@ router.post('/verify/:contractId', async (req, res) => {
 
     // Find the user (buyer) associated with the contract
     const buyer = await User.findById(contract.buyer);
-
+   
     if (!buyer || !buyer.publicKey) {
       return res.status(400).json({ message: 'Buyer not found or public key missing' });
     }
+  
 
     // Verify the contract using the buyer's public key
     const isVerified = verify_contract(contract, buyer.publicKey);
-
+    console.log(isVerified)
     if (isVerified) {
       res.json({ message: 'Contract is verified and authentic' });
     } else {
@@ -54,15 +61,50 @@ router.post('/verify/:contractId', async (req, res) => {
   }
 });
 
-router.get('/seller/:sellerId', async (req, res) => {
+// all contracts where you are the buyer 
+router.post('/buyer', async (req, res) => {
+  console.log(req)
   try {
-    const sellerId = req.params.sellerId;
-    const contracts = await Contract.find({ seller: sellerId });
+    const buyerId = req.body.buyerId; // Assuming the user ID is sent in the request body
 
+    // Find all contracts where the user is the buyer
+    const contracts = await Contract.find({ buyer: buyerId });
+
+    // Enhance the contract data with seller names
+    const contractsWithSellerNames = await Promise.all(
+      contracts.map(async (contract) => {
+        const seller = await User.findById(contract.seller);
+        const sellerName = seller ? seller.name : 'Unknown Seller';
+
+        return {
+          ...contract._doc,
+          sellerName,
+        };
+      })
+    );
+
+    res.json(contractsWithSellerNames);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+//all contracts if you are the seller (rejected waale show ni krne hai)
+router.post('/seller', async (req, res) => {
+  console.log(req)
+  try {
+    const sellerId = req.body.sellerId; // Assuming the user ID is sent in the request body
+
+    // Find all contracts where the user is the seller and the status is not rejected
+    const contracts = await Contract.find({ seller: sellerId, status: { $ne: 'rejected' } });
+
+    // Enhance the contract data with buyer names
     const contractsWithBuyerNames = await Promise.all(
       contracts.map(async (contract) => {
         const buyer = await User.findById(contract.buyer);
         const buyerName = buyer ? buyer.name : 'Unknown Buyer';
+
         return {
           ...contract._doc,
           buyerName,
@@ -76,5 +118,63 @@ router.get('/seller/:sellerId', async (req, res) => {
     res.status(500).json({ message: 'Server error' });
   }
 });
+
+//seller can reject the contract
+router.post('/reject', async (req, res) => {
+  try {
+    const { sellerId, contractId } = req.body;
+
+    // Check if the seller ID and contract ID are provided
+    if (!sellerId || !contractId) {
+      return res.status(400).json({ message: 'Seller ID and Contract ID are required' });
+    }
+
+    // Find the contract to update
+    const contract = await Contract.findOne({ _id: contractId, seller: sellerId, status: 'sent' });
+
+    if (!contract) {
+      return res.status(404).json({ message: 'Contract not found or cannot be rejected' });
+    }
+
+    // Update the contract status to 'rejected'
+    contract.status = 'rejected';
+    await contract.save();
+
+    res.json({ message: 'Contract rejected successfully' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+//seller can accept , ye hone ke baad apna payments ka start krdena 
+router.post('/accept', async (req, res) => {
+  try {
+    const { sellerId, contractId } = req.body;
+
+    // Check if the seller ID and contract ID are provided
+    if (!sellerId || !contractId) {
+      return res.status(400).json({ message: 'Seller ID and Contract ID are required' });
+    }
+
+    // Find the contract to update
+    const contract = await Contract.findOne({ _id: contractId, seller: sellerId, status: 'sent' });
+
+    if (!contract) {
+      return res.status(404).json({ message: 'Contract not found or cannot be accepted' });
+    }
+
+    // Update the contract status to 'accepted'
+    contract.status = 'accepted';
+    await contract.save();
+
+    res.json({ message: 'Contract accepted successfully' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+
 
 module.exports = router;

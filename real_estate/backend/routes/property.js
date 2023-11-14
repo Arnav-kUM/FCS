@@ -4,6 +4,7 @@ const Contract = require('../models/Contract')
 const router = express.Router();
 const { body, validationResult } = require('express-validator');
 const crypto = require('crypto');
+const mongoose = require('mongoose');
 
 const bcrypt = require('bcryptjs');
 var jwt = require('jsonwebtoken');
@@ -191,48 +192,58 @@ const sign_function = (data, privateKey) => {
 
 // Route 7: Book a property with signing
 router.post('/bookproperty/:id', async (req, res) => {
+  console.log(req.body);
   try {
-      const property = await Property.findById(req.params.id);
+    const property = await Property.findById(req.params.id);
 
-      if (!property) {
-          return res.json({ message: 'Property not found' });
-      }
+    if (!property) {
+      return res.json({ message: 'Property not found' });
+    }
 
-      // Fetch the buyer's private key based on their user ID (assumes you have implemented this logic)
-      const buyerId = req.body.buyer; // Get the buyer's user ID from the request
-      const buyer = await User.findById(buyerId);
+    // Fetch the buyer's private key based on their user ID (assumes you have implemented this logic)
+    const buyerId = req.body.buyer; // Get the buyer's user ID from the request
+    if (!mongoose.Types.ObjectId.isValid(buyerId)) {
+      return res.json({ message: 'Invalid buyer ID' });
+    }
 
-      if (!buyer || !buyer.privateKey) {
-          return res.json({ message: 'Buyer not found or private key missing' });
-      }
+    const buyer = await User.findById(buyerId);
 
-      const buyerPrivateKey = buyer.privateKey; // Get the buyer's private key
+    if (!buyer || !buyer.privateKey) {
+      return res.json({ message: 'Buyer not found or private key missing' });
+    }
 
-      // Create the contract data
-      const contractData = {
-          seller: property.owner, // Set the seller to the property's owner
-          buyer: req.body.buyer, // Set the buyer based on your authentication or request data
-          property: property._id, // Set the property to the booked property
-          type: req.body.type, // Set the type (rent or buy) based on your form or request data
-          terms: req.body.terms, // Set the contract terms based on your form or request data
-      };
+    const buyerPrivateKey = buyer.privateKey; // Get the buyer's private key
 
-      // Use the private key to sign the contract data
-      const signature = sign_function(JSON.stringify(contractData), buyerPrivateKey);
+    // Create the contract data
+    const contractData = {
+      seller: property.owner, // Set the seller to the property's owner
+      buyer: buyerId, // Set the buyer based on your authentication or request data
+      property: property._id, // Set the property to the booked property
+      type: req.body.type, // Set the type (rent or buy) based on your form or request data
+      terms: req.body.terms, // Set the contract terms based on your form or request data
+    };
 
-      // Include the contract data and the signature in the contract object
-      const contract = new Contract({
-          ...contractData,
-          signature: signature, // Include the signature in the contract
-      });
-      // Save the signed contract to the database
-      await contract.save();
+    // Use the private key to sign the contract data
+    const signature = sign_function(JSON.stringify(contractData), buyerPrivateKey);
 
-      // You can perform additional actions, such as updating the property's status here
-      res.json({ message: 'Property booked successfully', contract });
+    // Include the contract data and the signature in the contract object
+    const contract = new Contract({
+      seller: contractData.seller,
+      buyer: contractData.buyer,
+      property: contractData.property,
+      type: contractData.type,
+      terms: contractData.terms,
+      signature: signature,
+    });
+
+    // Save the signed contract to the database
+    await contract.save();
+
+    // You can perform additional actions, such as updating the property's status here
+    res.json({ message: 'Property booked successfully', contract });
   } catch (error) {
-      console.error(error.message);
-      res.status(500).send("Internal Server Error");
+    console.error(error.message);
+    res.status(500).send('Internal Server Error');
   }
 });
 

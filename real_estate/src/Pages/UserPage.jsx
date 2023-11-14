@@ -4,7 +4,7 @@ import DetailedView from './DetailedView';
 
 import MyProperties from './MyProperties'
 import TransactionPage from './TransactionPage';
-
+import ContractsPage from './Contracts';
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import Dashboard from './DashBoard';
 const UserPage = () => {
@@ -15,6 +15,9 @@ const UserPage = () => {
             <Route element={<DetailedView />} path="/details/:propertyId" />
             <Route element={<MyProperties />} path="/myproperty" />
             <Route element={<TransactionPage />} path="/transaction" />
+            <Route element={<ContractsPage />} path="/contracts" />
+        
+        
           
           </Routes>
       </div>

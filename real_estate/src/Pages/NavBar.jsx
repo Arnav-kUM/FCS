@@ -5,7 +5,6 @@ import AuthContext from '../context/authContext';
 const NavBar = () => {
   const [isDropdownOpen, setDropdownOpen] = useState(false);
   const { user } = useContext(AuthContext);
-  console.log(user)
 
   const toggleDropdown = () => {
     setDropdownOpen(!isDropdownOpen);
@@ -52,7 +51,7 @@ const NavBar = () => {
               <Link to="/user/transaction" className="text-xl text-[#9041c1] hover:text-[#ffdd62] duration-500">Transactions</Link>
             </li>
             <li className="mx-4">
-              <Link to="/user/about" className="text-xl text-[#9041c1] hover:text-[#ffdd62] duration-500">ABOUT</Link>
+              <Link to="/user/contracts" className="text-xl text-[#9041c1] hover:text-[#ffdd62] duration-500">Contracts</Link>
             </li>
             <li className="mx-4">
               <Link to="/user/help" className="text-xl text-[#9041c1] hover:text-[#ffdd62] duration-500">HELP</Link>

@@ -30,6 +30,12 @@ const contractSchema = new Schema({
         type: String, // Store the digital signature
         required: true,
     },
+    status: {
+        type: String,
+        enum: ['sent', 'accepted', 'rejected'],
+        default: 'sent', // Default status is 'sent'
+        required: true,
+    },
     // Additional contract fields, if needed
     timestamp: {
         type: Date,
