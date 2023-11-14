@@ -32,7 +32,7 @@ const Login = () => {
               if (userData.role === 'admin') {
                 navigate('/admin');
               } else {
-                navigate('/home');
+                navigate('/user');
               }
               console.log(user)
       

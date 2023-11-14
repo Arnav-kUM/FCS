@@ -32,13 +32,13 @@ const NavBar = () => {
         {user && user.role === 'admin' && (
           <>
             <li className="mx-4">
-              <Link to="/admin/dashboard" className="text-xl text-[#9041c1] hover:text-[#ffdd62] duration-500">Admin Dashboard</Link>
+              <Link to="/admin" className="text-xl text-[#9041c1] hover:text-[#ffdd62] duration-500">Admin Dashboard</Link>
             </li>
             <li className="mx-4">
               <Link to="/admin/report" className="text-xl text-[#9041c1] hover:text-[#ffdd62] duration-500">Moderate Listings</Link>
             </li>
             <li className="mx-4">
-              <Link to="/admin/verifycontracts" className="text-xl text-[#9041c1] hover:text-[#ffdd62] duration-500">Verify Contracts</Link>
+              <Link to="/admin/verify" className="text-xl text-[#9041c1] hover:text-[#ffdd62] duration-500">Verify Contracts</Link>
             </li>
           </>
         )}
@@ -46,16 +46,16 @@ const NavBar = () => {
         {user && user.role === 'user' && (
           <>
             <li className="mx-4">
-              <Link to="/myproperty" className="text-xl text-[#9041c1] hover:text-[#ffdd62] duration-500">My Properties</Link>
+              <Link to="/user/myproperty" className="text-xl text-[#9041c1] hover:text-[#ffdd62] duration-500">My Properties</Link>
             </li>
             <li className="mx-4">
-              <Link to="/transaction" className="text-xl text-[#9041c1] hover:text-[#ffdd62] duration-500">Transactions</Link>
+              <Link to="/user/transaction" className="text-xl text-[#9041c1] hover:text-[#ffdd62] duration-500">Transactions</Link>
             </li>
             <li className="mx-4">
-              <Link to="/about" className="text-xl text-[#9041c1] hover:text-[#ffdd62] duration-500">ABOUT</Link>
+              <Link to="/user/about" className="text-xl text-[#9041c1] hover:text-[#ffdd62] duration-500">ABOUT</Link>
             </li>
             <li className="mx-4">
-              <Link to="/help" className="text-xl text-[#9041c1] hover:text-[#ffdd62] duration-500">HELP</Link>
+              <Link to="/user/help" className="text-xl text-[#9041c1] hover:text-[#ffdd62] duration-500">HELP</Link>
             </li>
           </>
         )}
@@ -72,17 +72,17 @@ const NavBar = () => {
             <div className="absolute right-0 mt-2 -mr-3 bg-white border border-gray-200 rounded-lg shadow dark:border-gray-600">
               <ul className="py-2">
                 <li>
-                  <Link to="/dashboard" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">
+                  <Link to="/user/dashboard" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">
                     Dashboard
                   </Link>
                 </li>
                 <li>
-                  <Link to="/settings" className="block px-4 py-2 text-sm text-gray-700 hover.bg-gray-100 dark:hover.bg-gray-600 dark:text-gray-200 dark:hover:text-white">
+                  <Link to="/user/settings" className="block px-4 py-2 text-sm text-gray-700 hover.bg-gray-100 dark:hover.bg-gray-600 dark:text-gray-200 dark:hover:text-white">
                     Settings
                   </Link>
                 </li>
                 <li>
-                  <Link to="/logout" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">
+                  <Link to="/user/logout" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">
                     Logout
                   </Link>
                 </li>

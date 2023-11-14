@@ -23,7 +23,7 @@ const Home = () => {
   };
 
   const handleViewDetails = (propertyId) => {
-    navigate(`/details/${propertyId}`);
+    navigate(`/user/details/${propertyId}`);
   }
 
   return (
