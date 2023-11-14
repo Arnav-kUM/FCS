@@ -16,8 +16,8 @@ const UserPage = () => {
             <Route element={<MyProperties />} path="/myproperty" />
             <Route element={<TransactionPage />} path="/transaction" />
             <Route element={<ContractsPage />} path="/contracts" />
-        
-        
+            <Route element={<checkoutSuccess />} path="/checkoutSuccess" />
+            <Route element={<checkoutFail />} path="/checkoutFail" />
           
           </Routes>
       </div>
