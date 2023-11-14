@@ -146,29 +146,18 @@ router.get('/fetchavailablelistings', async (req, res) => {
   }
 });
 
-router.get('/fetchproperty/:id', async (req, res) => {
+router.get('/fetchproperty/:id', fetchuser ,async (req, res) => {
+  const userId = req.user.id; 
   try {
+    if(!userId){
+      return res.status(401).send("Not Allowed");
+    }
     const property = await Property.findById(req.params.id);
 
     if (!property) {
       return res.json({ message: 'Property not found' });
     }
-
-    const owner = await User.findById(property.owner);
-
-    if (owner) {
-      // Create a new object with the owner's name
-      const propertyWithOwnerName = {
-        ...property.toObject(),
-        ownerName: owner.name,
-      };
-
-      res.json(propertyWithOwnerName);
-    } else {
-      // Fallback to 'Unknown' if owner not found
-      property.ownerName = 'Unknown';
-      res.json(property);
-    }
+    res.json(property);
   } catch (error) {
     console.error(error.message);
     res.status(500).send("Internal Server Error");
