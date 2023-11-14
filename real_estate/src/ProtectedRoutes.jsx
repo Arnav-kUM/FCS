@@ -1,14 +1,18 @@
-import React from 'react';
-import { Route, Navigate,Outlet } from 'react-router-dom';
+import React, { useContext } from 'react';
+import { Navigate } from 'react-router-dom';
+import AuthContext from './context/authContext';
 
-function ProtectedRoute({ element, ...props }) {
-  const token = localStorage.getItem('token');
+const ProtectedRoute = ({ element, allowedRoles }) => {
+  const { user } = useContext(AuthContext);
+  console.log(user)
 
-  if (!token) {
+  // Check if the user has one of the allowed roles
+  if (user && allowedRoles.includes(user.role)) {
+    return element;
+  } else {
+    // Redirect to a login page or another route
     return <Navigate to="/" />;
   }
-
-  return <Outlet element={element} {...props} />;
-}
+};
 
 export default ProtectedRoute;
