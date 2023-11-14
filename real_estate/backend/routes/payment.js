@@ -6,8 +6,6 @@ const stripe = Stripe("sk_test_51OCPYhSBb3uJVSHxRyOLljTf8z4jcKjSGQQhbPvQOy1twvl9
 
 
 router.post("/newpayment", async (req, res) => {
-    console.log("hello")
-
     const session = await stripe.checkout.sessions.create({
         payment_method_types: ['card'],
         line_items: [
