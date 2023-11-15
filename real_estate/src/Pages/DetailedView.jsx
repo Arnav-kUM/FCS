@@ -8,15 +8,35 @@ const DetailedView = () => {
     const [propertyDetails, setPropertyDetails] = useState([]);
     const { user } = useContext(AuthContext);
     const navigate = useNavigate();
+    const token = localStorage.getItem('token');
+    const [ownerName, setOwnerName] = useState();
 
     const fetchPropertyDetails = async () => {
         try {
-            const response = await axios.get(`http://localhost:3000/api/property/fetchproperty/${propertyId}`);
+            const response = await axios.get(`http://localhost:3000/api/property/fetchproperty/${propertyId}`,
+            {
+                headers: {
+                  'auth-token': token,
+                },
+              }
+            );
             setPropertyDetails(response.data);
+            await fetchOwnerName(response.data.owner)
         } catch (error) {
             console.error(error);
         }
     };
+
+    const fetchOwnerName = async (id) => {
+
+        const sellerResponse = await axios.get(`http://localhost:3000/api/auth/getuser/${id}`, {
+            headers: {
+              'auth-token': token,
+            },
+        });
+
+        setOwnerName(sellerResponse.data.name);
+    }
 
     useEffect(() => {
         if (propertyId) {
@@ -77,7 +97,7 @@ const DetailedView = () => {
                     <h1 className='font-bold text-2xl text-[#9041c1] mx-2'>{propertyDetails.title}</h1>
                         <div className='flex'>
                             <h1 className='font-bold text-2xl text-[#9041c1] mx-2'>Seller:</h1>
-                            <h1 className='text-2xl'>{propertyDetails.ownerName}</h1>
+                            <h1 className='text-2xl'>{ownerName}</h1>
                         </div>
                         <div className='flex'>
                             <h1 className='font-bold text-2xl text-[#9041c1] mx-2'>Location:</h1>
