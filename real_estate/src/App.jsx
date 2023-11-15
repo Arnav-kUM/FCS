@@ -1,4 +1,5 @@
 import Login from "./Pages/Login";
+import CreateUser from "./Pages/CreateNewUser";
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import AuthState from "./context/authstate";
 import AdminPage from "./Pages/AdminPage";
@@ -10,6 +11,7 @@ function App() {
       <AuthState>
         <Routes>
           <Route element={<Login />} path="/"></Route>
+          <Route element={<CreateUser />} path="/new-account"></Route>
           {/* <Route element={<AdminPage />} path="/admin/*"></Route>
           <Route element={<UserPage />} path="/user/*"></Route> */} 
           {/* uncomment above and comment below to enter without authentication, most features wont work without auth though */}

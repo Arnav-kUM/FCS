@@ -133,7 +133,7 @@ router.put('/updateproperty/:id', async (req, res) => {
 router.get('/fetchavailablelistings', async (req, res) => {
   const { type } = req.query;
   try {
-    let query = { status: 'available' };
+    let query = { status: 'available', transacted: 'no' };
 
     if (type) {
       query.listing_type = type;

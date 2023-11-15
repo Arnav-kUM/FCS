@@ -26,11 +26,11 @@ router.post('/createuser', [
 
       const adminWithEmail = await Admin.findOne({ email: req.body.email });
       if (adminWithEmail) {
-        return res.status(400).json({ error: "Email is already registered as an admin" });
+        return res.json({ success: false, error: "Email is already registered as an admin" });
       }
       let user = await User.findOne({ email: req.body.email });
       if (user) {
-        return res.status(400).json({ error: "Sorry a user with this email already exists" })
+        return res.json({ success: false, error: "Sorry a user with this email already exists" })
       }
       const salt = await bcrypt.genSalt(10);
       const secPass = await bcrypt.hash(req.body.password, salt);
@@ -45,12 +45,12 @@ router.post('/createuser', [
       const data = {
         user: {
           id: user.id,
-
+          role: 'user',
         }
       }
       const authtoken = jwt.sign(data, JWT_SECRET);
   
-      res.json({ authtoken })
+      res.json({ success: true, authtoken });
   
     } catch (error) {
       console.error(error.message);

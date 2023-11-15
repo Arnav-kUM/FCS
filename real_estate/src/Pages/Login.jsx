@@ -52,7 +52,7 @@ const Login = () => {
     return (
         <div className='flex justify-center items-center h-screen'>
             <div className='bg-white border-2 border-[#9041c1] shadow-sm px-4 py-2 rounded-lg'>
-                <form onSubmit={handleSubmit}>
+                <form onSubmit={handleSubmit}className="w-[280px]">
                     <div className='flex justify-center'>
                         <img className="h-10 inline mr-2 rounded-full" src="/Images/real_estate.webp" alt="Failed to load" />
                     </div>
@@ -78,6 +78,10 @@ const Login = () => {
                             onChange={(e) => setPassword(e.target.value)}
                         />
                     </div>
+                    <a href="/new-account" className="text-blue-500">
+                      <p>Create new Account?</p>
+                    </a>
+
                     <div className="flex-auto mt-1">
                         <button
                             type="submit"
