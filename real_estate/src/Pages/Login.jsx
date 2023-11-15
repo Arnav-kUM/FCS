@@ -1,4 +1,4 @@
-import React, { useState,useContext } from "react";
+import React, { useState,useContext,useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from 'axios';
 import AuthContext from "../context/authContext";// Import useNavigate
@@ -8,6 +8,22 @@ const Login = () => {
     const [password, setPassword] = useState("");
     const {login,user} =useContext(AuthContext);
     const navigate = useNavigate();
+
+    useEffect(() => {
+      const token = localStorage.getItem("token");
+     
+      if (token) {
+        const decodedToken = jwtDecode(token); 
+    
+        const userData = {
+          role: decodedToken.user["role"],
+          id: decodedToken.user["id"],
+        };
+        login(userData);
+        console.log(user)
+      }
+    }, [])
+    
 
     const handleSubmit = async (e) => {
         e.preventDefault();

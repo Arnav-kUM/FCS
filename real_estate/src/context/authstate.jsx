@@ -1,31 +1,30 @@
-import React, { createContext, useState, useEffect } from 'react';
-import AuthContext from './authContext';
-
+import React, { createContext, useState, useEffect } from "react";
+import AuthContext from "./authContext";
+import { jwtDecode } from "jwt-decode";
 const AuthState = (props) => {
   const [user, setUser] = useState(null); // User state, initially null
   const login = (userData) => {
     setUser(userData);
-    console.log(userData)
+    console.log(userData);
   };
 
-  // useEffect(() => {
-  //   // You can add authentication logic here, e.g., checking for an existing token in local storage
-  //   // Example:
-  //   const token = localStorage.getItem("token");
-  //   if (token) {
-  //     // Fetch user data using the token and update the user state
-  //     // You can use Axios or fetch for making an API request to verify the token and get user data
-  //     // Example:
-  //     // axios.get("/api/user", { headers: { Authorization: `Bearer ${token}` } })
-  //     //   .then((response) => {
-  //     //     const userData = response.data;
-  //     //     loginUser(userData);
-  //     //   })
-  //     //   .catch((error) => {
-  //     //     console.error("Error fetching user data:", error);
-  //     //   });
-  //   }
-  // }, []);
+  useEffect(() => {
+    // You can add authentication logic here, e.g., checking for an existing token in local storage
+    // Example:
+    const token = localStorage.getItem("token");
+    if (token) {
+      const decodedToken = jwtDecode(token); 
+  
+      const userData = {
+        role: decodedToken.user["role"],
+        id: decodedToken.user["id"],
+       
+      };
+     
+      setUser(userData)
+      console.log(user)
+    }
+  }, []);
 
   return (
     <AuthContext.Provider
