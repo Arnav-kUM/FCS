@@ -183,6 +183,34 @@ router.post('/accept', async (req, res) => {
   }
 });
 
+// to update the contract to "updated" after the payment is succesfull 
+router.get('/completed', async (req, res) => {
+  try {
+    const buyerId = req.body.buyerId;
+    const propertyId = req.body.propertyId;
+    // console.log(buyerId);
+    // console.log(propertyId);
 
+    const updatedContract = await Contract.findOneAndUpdate(
+      {
+        buyer: buyerId,
+        property: propertyId,
+      },
+      
+      { $set: { status: 'completed' } },
+      { new: true } // Return the updated document
+    );
+
+    if (!updatedContract) {
+      return res.status(404).json({ message: 'Contract not found' });
+    }
+
+    res.json(updatedContract);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+
+});
 
 module.exports = router;
