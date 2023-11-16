@@ -138,7 +138,7 @@ router.get('/fetchavailablelistings',fetchuser, async (req, res) => {
   try {
     let query = { status: 'available', transacted: 'no' };
 
-    if (type) {
+    if (type && type !== 'all') {
       query.listing_type = type;
     }
 

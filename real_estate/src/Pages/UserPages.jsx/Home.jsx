@@ -42,20 +42,8 @@ const Home = () => {
     <div>
       <NavBar />
       <div className='mx-10 mt-2'>
-        <div className="relative">
-          <img className="w-screen h-[350px] blur-[4px] rounded-sm" src="/Images/bg.jpg" alt="" />
-          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center">
-            <input
-              type="text"
-              placeholder="Search..."
-              className="px-4 py-3 rounded-full border border-[#5f41c1] focus:outline-none w-[500px]"
-            />
-            <button className="absolute right-0 top-1/2 -translate-y-1/2 p-4 bg-[#9041c1] rounded-full search-button">
-              <AiOutlineSearch />
-            </button>
-          </div>
-        </div>
-        <div className='flex my-2'>
+        
+        <div className='flex my-2 justify-center'>
           <button
             className={`bg-[#9041c1] text-white py-2 px-4 rounded-md mr-2 ${selectedType === 'All' ? 'opacity-75' : ''}`}
             onClick={() => handleTypeChange('All')}
