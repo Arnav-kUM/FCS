@@ -8,17 +8,17 @@ const CheckoutSuccess = () => {
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const propertyId = urlParams.get('propertyId');
+    const contractId = urlParams.get('contractId'); // Extract contractId from URL parameters
 
-    if (propertyId) {
-      
-      // Make a request to your newtransaction API here, passing propertyId and user.id in the request body
+    if (propertyId && contractId) {
+      // Make a request to your newtransaction API here, passing propertyId, contractId, and user.id in the request body
       // Example using fetch:
       fetch('http://localhost:3000/api/transaction/newtransaction', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ propertyId:propertyId, userId: user.id }),
+        body: JSON.stringify({ propertyId, contractId, userId: user.id }),
       })
         .then(response => response.json())
         .then(data => {
@@ -32,7 +32,7 @@ const CheckoutSuccess = () => {
           setIsLoading(false); // Set loading to false once the request is complete
         });
     } else {
-      setIsLoading(false); // Set loading to false if propertyId is not available
+      setIsLoading(false); // Set loading to false if propertyId or contractId is not available
     }
   }, [user.id]);
 

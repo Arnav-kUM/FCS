@@ -6,6 +6,7 @@ var jwt = require('jsonwebtoken');
 var fetchuser = require('../middleware/fetchuser');
 const Property = require('../models/Property');
 const User = require('../models/Users');
+const Contract = require('../models/Contract');
 
 const JWT_SECRET = 'armoni@Yu';
 
@@ -14,9 +15,13 @@ router.post('/newtransaction', async (req, res) => {
   try {
     const newOwner = req.body.userId;
     const propertyId = req.body.propertyId;
+    const contractId = req.body.contractId
+
     console.log("new owner of the property",newOwner)
     console.log("property id in transaction",propertyId)
         let property = await Property.findById(propertyId);
+        let contract = await Contract.findById(contractId);
+        contract.status='completed'
         const CurOwner=property.owner
         console.log("Current owner of property",CurOwner)
         if (property.status.toString() !== 'available') {

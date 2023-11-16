@@ -154,7 +154,9 @@ const ContractsPage = () => {
         <table className="w-full bg-white border border-gray-300 shadow-md rounded-lg mb-4">
           {/* ... Table header */}
           <tbody>
-            {outgoingContracts.map((contract, index) => (
+          {outgoingContracts
+        .filter((contract) => contract.status !== "completed") // Filter out completed contracts
+        .map((contract, index) => (
               <tr key={index}>
                 {/* Display contract details */}
                 <td className="py-2 px-4">{contract.sellerName}</td>
@@ -206,7 +208,9 @@ const ContractsPage = () => {
         <table className="w-full bg-white border border-gray-300 shadow-md rounded-lg">
           {/* ... Table header */}
           <tbody>
-            {incomingContracts.map((contract, index) => (
+          {outgoingContracts
+        .filter((contract) => contract.status !== "completed") // Filter out completed contracts
+        .map((contract, index) => (
               <tr key={index}>
                 {/* Display contract details */}
                 <td className="py-2 px-4">{contract.buyerName}</td>
