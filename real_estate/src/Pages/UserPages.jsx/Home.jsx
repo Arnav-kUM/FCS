@@ -8,16 +8,18 @@ import AuthContext from '../../context/authContext';
 
 const Home = () => {
   const [recommendedProperties, setRecommendedProperties] = useState([]);
+  const [selectedType, setSelectedType] = useState('All');
   const navigate = useNavigate();
-  const {user} = useContext(AuthContext);
+  const { user } = useContext(AuthContext);
   const token = localStorage.getItem('token');
+
   useEffect(() => {
     getRecommendedProperties();
-  }, []);
+  }, [selectedType]);
 
   const getRecommendedProperties = async () => {
     try {
-      const response = await axios.get(`http://localhost:3000/api/property/fetchavailablelistings`, {
+      const response = await axios.get(`http://localhost:3000/api/property/fetchavailablelistings?type=${selectedType.toLowerCase()}`, {
         headers: {
           'auth-token': token,
         },
@@ -27,7 +29,10 @@ const Home = () => {
       console.error(error);
     }
   };
-  
+
+  const handleTypeChange = (type) => {
+    setSelectedType(type);
+  };
 
   const handleViewDetails = (propertyId) => {
     navigate(`/user/details/${propertyId}`);
@@ -49,6 +54,26 @@ const Home = () => {
               <AiOutlineSearch />
             </button>
           </div>
+        </div>
+        <div className='flex my-2'>
+          <button
+            className={`bg-[#9041c1] text-white py-2 px-4 rounded-md mr-2 ${selectedType === 'All' ? 'opacity-75' : ''}`}
+            onClick={() => handleTypeChange('All')}
+          >
+            All
+          </button>
+          <button
+            className={`bg-[#9041c1] text-white py-2 px-4 rounded-md mr-2 ${selectedType === 'Sell' ? 'opacity-75' : ''}`}
+            onClick={() => handleTypeChange('Sell')}
+          >
+            Sell
+          </button>
+          <button
+            className={`bg-[#9041c1] text-white py-2 px-4 rounded-md ${selectedType === 'Rent' ? 'opacity-75' : ''}`}
+            onClick={() => handleTypeChange('Rent')}
+          >
+            Rent
+          </button>
         </div>
         <h1 className='font-bold text-2xl text-[#9041c1] mx-2 mt-4'>Recommended:</h1>
         <div className="flex flex-wrap justify-around mt-2">

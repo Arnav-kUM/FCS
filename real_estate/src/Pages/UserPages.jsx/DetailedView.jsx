@@ -2,6 +2,7 @@ import React, { useEffect, useState, useContext } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import AuthContext from '../../context/authContext'; // Update the path
+import Swal from 'sweetalert2';
 
 const DetailedView = () => {
     const { propertyId } = useParams();
@@ -60,6 +61,12 @@ const DetailedView = () => {
 
             // Handle the response, show success or error message to the user
             console.log(response.data);
+            if(response.data.message === 'You have already booked this property'){
+                alert("You already booked this property");
+            }
+            else{
+                Swal.fire('Successfully Requested!', "Book contract/request created successfully", 'success');
+            }
         } catch (error) {
             console.error(error);
         }
