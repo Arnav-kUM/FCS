@@ -213,4 +213,33 @@ router.get('/completed', async (req, res) => {
 
 });
 
+router.get('/checkSoldStatus/:contractId', async (req, res) => {
+  try {
+    const contractId = req.params.contractId;
+
+    // Find the contract using the contractId
+    const contract = await Contract.findById(contractId);
+    if (!contract) {
+      return res.status(404).json({ message: 'Contract not found' });
+    }
+
+    const propertyId = contract.property
+    const property = await Property.findById(propertyId);
+    if (!property) {
+      return res.status(404).json({ message: 'Property not found' });
+    }
+
+    let status = property.status
+
+   
+    // Check if the contract status is "sold"
+    const isSold = status === 'sold';
+
+    res.json({ isSold });
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
 module.exports = router;

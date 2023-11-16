@@ -20,8 +20,9 @@ router.post('/newtransaction', async (req, res) => {
     console.log("new owner of the property",newOwner)
     console.log("property id in transaction",propertyId)
         let property = await Property.findById(propertyId);
-        let contract = await Contract.findById(contractId);
-        contract.status='completed'
+        const newContract = {};
+        newContract.status = 'completed'
+        contract = await Contract.findByIdAndUpdate(contractId, { $set: newContract }, { new: true })
         const CurOwner=property.owner
         console.log("Current owner of property",CurOwner)
         if (property.status.toString() !== 'available') {

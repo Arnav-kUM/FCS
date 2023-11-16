@@ -28,23 +28,34 @@ const ContractsPage = () => {
   const fetchBuyerContracts = async () => {
     try {
       const userId = user.id; // Assuming your user object has an 'id' property
-
+  
       const response = await axios.post(
         "http://localhost:3000/api/contract/buyer",
         { buyerId: userId } // Send user ID in the request body
       );
-      console.log(response);
-
+  
       if (response.status !== 200) {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
-
-      const data = await response.data;
-      console.log(data);
-
-      if (data !== undefined) {
-        setOutgoingContracts(data);
-      }
+  
+      const contracts = await response.data;
+  
+      // Fetch property status for each contract
+      const contractsWithData = await Promise.all(
+        contracts.map(async (contract) => {
+          const propertyStatusResponse = await axios.get(
+            `http://localhost:3000/api/contract/checkSoldStatus/${contract._id}`
+          );
+          const isSold = propertyStatusResponse.data.isSold;
+  
+          return {
+            ...contract,
+            isSold,
+          };
+        })
+      );
+  
+      setOutgoingContracts(contractsWithData);
     } catch (error) {
       console.error(error);
     }
@@ -189,11 +200,16 @@ const ContractsPage = () => {
                   )}
                   {contract.status === "accepted" && (
                     <button
-                      className="bg-[#3498db] text-white rounded-lg px-2 ml-2"
-                      onClick={() => handlePayment(contract._id)}
-                    >
-                      Payment
-                    </button>
+                    className={`${
+                      propertyStatus[contract._id]
+                        ? "bg-gray-400"
+                        : "bg-[#3498db]"
+                    } text-white rounded-lg px-2 ml-2`}
+                    onClick={() => handlePayment(contract._id)}
+                    disabled={propertyStatus[contract._id]}
+                  >
+                    {propertyStatus[contract._id] ? "Sold" : "Payment"}
+                  </button>
                   )}
                 </td>
               </tr>
@@ -208,7 +224,7 @@ const ContractsPage = () => {
         <table className="w-full bg-white border border-gray-300 shadow-md rounded-lg">
           {/* ... Table header */}
           <tbody>
-          {outgoingContracts
+          {incomingContracts
         .filter((contract) => contract.status !== "completed") // Filter out completed contracts
         .map((contract, index) => (
               <tr key={index}>
