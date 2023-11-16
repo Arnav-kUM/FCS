@@ -2,8 +2,8 @@ import Login from "./Pages/Login";
 import CreateUser from "./Pages/CreateNewUser";
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import AuthState from "./context/authstate";
-import AdminPage from "./Pages/AdminPage";
-import UserPage from "./Pages/UserPage";
+import AdminPage from "./Pages/AdminPages/AdminPage";
+import UserPage from "./Pages/UserPages.jsx/UserPage";
 import ProtectedRoute from "./ProtectedRoutes";
 function App() {
   return (

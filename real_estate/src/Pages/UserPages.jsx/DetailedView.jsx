@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import AuthContext from '../context/authContext'; // Update the path
+import AuthContext from '../../context/authContext'; // Update the path
 
 const DetailedView = () => {
     const { propertyId } = useParams();

@@ -10,26 +10,27 @@ const User = require('../models/Users');
 const JWT_SECRET = 'armoni@Yu';
 
 // Route 1: create a new transaction - Login required
-router.post('/newtransaction/:id', fetchuser,  async (req, res) => {
-
-    try {
-        const nu=req.user.id;
-        const pid=req.params.id;
-        let property = await Property.findById(req.params.id);
-        const ou=property.owner
+router.post('/newtransaction', async (req, res) => {
+  try {
+    const newOwner = req.body.userId;
+    const propertyId = req.body.propertyId;
+    console.log(newOwner)
+    console.log(propertyId)
+        let property = await Property.findById(propertyId);
+        const CurOwner=property.owner
         if (property.status.toString() !== 'available') {
             console.log("asfsdfsdf");
             return res.status(401).send("Property not available");
         }
         const transaction = await Transaction.create({
-            property: pid,
-            prevowner: ou,
-            newowner: nu,
+            property: propertyId,
+            prevowner: CurOwner,
+            newowner: newOwner,
             amount: property.price,
             type:property.type
           });
         const newProperty = {};
-        newProperty.owner=nu;
+        newProperty.owner=newOwner;
         newProperty.transacted = 'yes';
         if (!property) { return res.status(404).send("Not Found") }
         property = await Property.findByIdAndUpdate(req.params.id, { $set: newProperty }, { new: true })

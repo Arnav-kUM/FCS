@@ -6,7 +6,9 @@ import MyProperties from './MyProperties'
 import TransactionPage from './TransactionPage';
 import ContractsPage from './Contracts';
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
-import Dashboard from './DashBoard';
+import CheckoutFail from './checkoutFail';
+import CheckoutSuccess from './checkoutSuccess';
+import Dashboard from '../DashBoard';
 const UserPage = () => {
   return (
     <div >
@@ -16,8 +18,8 @@ const UserPage = () => {
             <Route element={<MyProperties />} path="/myproperty" />
             <Route element={<TransactionPage />} path="/transaction" />
             <Route element={<ContractsPage />} path="/contracts" />
-            <Route element={<checkoutSuccess />} path="/checkoutSuccess" />
-            <Route element={<checkoutFail />} path="/checkoutFail" />
+            <Route element={<CheckoutSuccess />} path="/checkoutSuccess" />
+            <Route element={<CheckoutFail />} path="/checkoutFail" />
           
           </Routes>
       </div>

@@ -3,7 +3,7 @@ import { Routes, Route } from 'react-router-dom';
 import AdminHome from './AdminHome';
 import AdminVerification from './AdminVerification';
 import ReportPage from './ReportPage';
-import NavBar from './NavBar';
+import NavBar from '../NavBar';
 
 const AdminPage = () => {
   return (

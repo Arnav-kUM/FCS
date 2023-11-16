@@ -1,13 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { AiOutlineSearch } from 'react-icons/ai';
-import NavBar from './NavBar';
+import NavBar from '../NavBar';
 import { useNavigate } from "react-router-dom";
 import axios from 'axios';
-import PayButton from './PayButton';
+import PayButton from '../PayButton';
+import { useContext } from 'react';
+import AuthContext from '../../context/authContext';
 
 const Home = () => {
   const [recommendedProperties, setRecommendedProperties] = useState([]);
   const navigate = useNavigate();
+  const {user} = useContext(AuthContext);
 
   useEffect(() => {
     getRecommendedProperties();
@@ -15,12 +18,17 @@ const Home = () => {
 
   const getRecommendedProperties = async () => {
     try {
-      const response = await axios.get(`http://localhost:3000/api/property/fetchavailablelistings`);
+      const response = await axios.get(`http://localhost:3000/api/property/fetchavailablelistings`, {
+        params: {
+          userId: user.id // Send user.id as a query parameter
+        }
+      });
       setRecommendedProperties(response.data);
     } catch (error) {
       console.error(error);
     }
   };
+  
 
   const handleViewDetails = (propertyId) => {
     navigate(`/user/details/${propertyId}`);

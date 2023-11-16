@@ -1,7 +1,7 @@
 // components/ReportedPropertiesList.js
 import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
-import AuthContext from '../context/authContext';
+import AuthContext from '../../context/authContext';
 
 const ReportedPropertiesList = () => {
   const { user } = useContext(AuthContext);

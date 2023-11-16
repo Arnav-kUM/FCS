@@ -132,12 +132,17 @@ router.put('/updateproperty/:id', async (req, res) => {
 
 router.get('/fetchavailablelistings', async (req, res) => {
   const { type } = req.query;
+  const userId = req.query.userId; // Retrieve user ID from query parameters
+
   try {
     let query = { status: 'available', transacted: 'no' };
 
     if (type) {
       query.listing_type = type;
     }
+
+    // Add the condition to filter out properties owned by the user
+    query.owner = { $ne: userId };
 
     const properties = await Property.find(query);
     res.json(properties);
@@ -146,6 +151,12 @@ router.get('/fetchavailablelistings', async (req, res) => {
     res.status(500).send("Internal Server Error");
   }
 });
+
+
+
+
+
+
 
 router.get('/fetchproperty/:id', fetchuser ,async (req, res) => {
   const userId = req.user.id; 
@@ -181,7 +192,6 @@ const sign_function = (data, privateKey) => {
 
 // Route 7: Book a property with signing
 router.post('/bookproperty/:id', async (req, res) => {
-  console.log(req.body);
   try {
     const property = await Property.findById(req.params.id);
 
@@ -193,6 +203,16 @@ router.post('/bookproperty/:id', async (req, res) => {
     const buyerId = req.body.buyer; // Get the buyer's user ID from the request
     if (!mongoose.Types.ObjectId.isValid(buyerId)) {
       return res.json({ message: 'Invalid buyer ID' });
+    }
+
+    // Check if a contract with the same buyer and property combination already exists
+    const existingContract = await Contract.findOne({
+      buyer: buyerId,
+      property: property._id,
+    });
+
+    if (existingContract) {
+      return res.json({ message: 'You have already booked this property' });
     }
 
     const buyer = await User.findById(buyerId);

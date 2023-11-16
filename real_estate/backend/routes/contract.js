@@ -3,6 +3,7 @@ const router = express.Router();
 const Contract = require('../models/Contract');
 const User = require('../models/Users');
 const crypto = require('crypto');
+const Property = require('../models/Property');
 
 const verify_contract = (contract, publicKey) => {
   try {
@@ -28,9 +29,9 @@ const verify_contract = (contract, publicKey) => {
 };
 
 // Create a new route for verifying a document
-router.post('/verify/:contractId', async (req, res) => {
+router.post('/verify', async (req, res) => {
   try {
-    const contractId = req.params.contractId;
+    const contractId = req.body.contractId;
 
     const contract = await Contract.findById(contractId);
     
@@ -63,7 +64,7 @@ router.post('/verify/:contractId', async (req, res) => {
 
 // all contracts where you are the buyer 
 router.post('/buyer', async (req, res) => {
-  console.log(req)
+ 
   try {
     const buyerId = req.body.buyerId; // Assuming the user ID is sent in the request body
 
@@ -75,10 +76,15 @@ router.post('/buyer', async (req, res) => {
       contracts.map(async (contract) => {
         const seller = await User.findById(contract.seller);
         const sellerName = seller ? seller.name : 'Unknown Seller';
+        console.log(sellerName)
+        const property = await Property.findById(contract.property)
+        const propertyName = property? property.title :"Unknown"
+        console.log(propertyName)
 
         return {
           ...contract._doc,
           sellerName,
+          propertyName,
         };
       })
     );
@@ -92,7 +98,6 @@ router.post('/buyer', async (req, res) => {
 
 //all contracts if you are the seller (rejected waale show ni krne hai)
 router.post('/seller', async (req, res) => {
-  console.log(req)
   try {
     const sellerId = req.body.sellerId; // Assuming the user ID is sent in the request body
 
@@ -104,10 +109,13 @@ router.post('/seller', async (req, res) => {
       contracts.map(async (contract) => {
         const buyer = await User.findById(contract.buyer);
         const buyerName = buyer ? buyer.name : 'Unknown Buyer';
-
+        const property = await Property.findById(contract.property)
+        const propertyName = property? property.title :"Unknown"
+       
         return {
           ...contract._doc,
           buyerName,
+          propertyName,
         };
       })
     );
