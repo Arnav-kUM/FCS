@@ -11,8 +11,8 @@ function App() {
     <div className="mx-2">
       <AuthState>
         <Routes>
-        <Route element={<Login />} path="/"></Route>
-        {/* <Route
+        <Route element={<Ekyc />} path="/"></Route>
+        <Route
                 element={
                   <ProtectedRoute
                     element={<Login />}
@@ -20,7 +20,7 @@ function App() {
                   />
                 }
                 path="/login"
-              /> */}
+              />
           <Route element={<CreateUser />} path="/new-account"></Route>
           {/* <Route element={<AdminPage />} path="/admin/*"></Route>
           <Route element={<UserPage />} path="/user/*"></Route> */} 
