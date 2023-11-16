@@ -5,7 +5,7 @@ import Swal from 'sweetalert2';
 
 const SellingHistory = () => {
   const [userProperties, setUserProperties] = useState([]);
-  const [isModalOpen, setModalOpen] = useState(false); // Define isModalOpen state
+  const [isModalOpen, setModalOpen] = useState(false);
   const [newProperty, setNewProperty] = useState({
     title: "",
     price: 0,
@@ -14,6 +14,8 @@ const SellingHistory = () => {
     description: "",
     status: ""
   });
+  const [editingProperty, setEditingProperty] = useState(null);
+
   const fetchUserProperties = async () => {
     try {
       const token = localStorage.getItem('token');
@@ -23,12 +25,12 @@ const SellingHistory = () => {
           'auth-token': token
         }
       });
-  
+
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
-  
-      const data = await response.json(); // Convert the response to JSON
+
+      const data = await response.json();
       setUserProperties(data);
       console.log(data);
     } catch (error) {
@@ -36,10 +38,9 @@ const SellingHistory = () => {
     }
   };
 
-// Call the fetchUserProperties function when the component mounts or whenever the user logs in
-useEffect(() => {
+  useEffect(() => {
     fetchUserProperties();
-}, []);
+  }, []);
 
   const openModal = () => {
     setModalOpen(true);
@@ -69,13 +70,12 @@ useEffect(() => {
         }
       );
       console.log("New Property added:", response.data);
-      // Update user properties after adding a new property
-      // fetchUserProperties();
       closeModal();
+      fetchUserProperties();
     } catch (error) {
       console.error(error);
     }
-  }; 
+  };
 
   const deleteAlert = (propertyId) => {
     Swal.fire({
@@ -104,16 +104,57 @@ useEffect(() => {
         },
       }
       );
-  
+
       console.log("Property deleted:", response.data);
-      // Refresh user properties after deleting a property
       fetchUserProperties();
     } catch (error) {
       console.error(error);
     }
   };
-  
-  
+
+  const handleEdit = (property) => {
+    setEditingProperty(property._id);
+    // Set initial values for the editing property
+    setNewProperty({
+      title: property.title,
+      price: property.price,
+      location: property.location,
+      listing_type: property.listing_type,
+      description: property.description,
+      status: property.status,
+    });
+  };
+
+  const handleUpdate = async (propertyId) => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axios.put(
+        `http://localhost:3000/api/property/updateproperty/${propertyId}`,
+        {
+          title: newProperty.title,
+          description: newProperty.description,
+          location: newProperty.location,
+          price: newProperty.price,
+          listing_type: newProperty.listing_type,
+          status: newProperty.status,
+        },
+        {
+          headers: {
+            'auth-token': token,
+          },
+        }
+      );
+      console.log("Property updated:", response.data);
+      setEditingProperty(null);
+      fetchUserProperties();
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const handleCancelEdit = () => {
+    setEditingProperty(null);
+  };
 
   return (
     <div className="container mx-auto py-6">
@@ -141,15 +182,109 @@ useEffect(() => {
         <tbody>
           {userProperties.map((property, index) => (
             <tr key={index}>
-              <td className="py-2 px-4">{property.title}</td>
-              <td className="py-2 px-4">{property.price}</td>
-              <td className="py-2 px-4">{property.location}</td>
-              <td className="py-2 px-4">{property.description}</td>
-              <td className="py-2 px-4">{property.dateOfListing}</td>
-              <td className="py-2 px-4">{property.listing_type}</td>
               <td className="py-2 px-4">
-                <button className="bg-blue-500 text-white rounded-lg px-2" onClick={() => handleEdit(property)}>Edit</button>
-                <button className="bg-red-500 text-white rounded-lg px-2 ml-2" onClick={() => deleteAlert(property._id)}>Delete</button>
+                {editingProperty === property._id ? (
+                  <input
+                    type="text"
+                    value={newProperty.title}
+                    onChange={(e) =>
+                      setNewProperty({ ...newProperty, title: e.target.value })
+                    }
+                  />
+                ) : (
+                  property.title
+                )}
+              </td>
+              <td className="py-2 px-4">
+                {editingProperty === property._id ? (
+                  <input
+                    type="text"
+                    value={newProperty.price}
+                    onChange={(e) =>
+                      setNewProperty({ ...newProperty, price: e.target.value })
+                    }
+                  />
+                ) : (
+                  property.price
+                )}
+              </td>
+              <td className="py-2 px-4">
+                {editingProperty === property._id ? (
+                  <input
+                    type="text"
+                    value={newProperty.location}
+                    onChange={(e) =>
+                      setNewProperty({ ...newProperty, location: e.target.value })
+                    }
+                  />
+                ) : (
+                  property.location
+                )}
+              </td>
+              <td className="py-2 px-4">
+                {editingProperty === property._id ? (
+                  <input
+                    type="text"
+                    value={newProperty.description}
+                    onChange={(e) =>
+                      setNewProperty({ ...newProperty, description: e.target.value })
+                    }
+                  />
+                ) : (
+                  property.description
+                )}
+              </td>
+              <td className="py-2 px-4">{property.dateOfListing}</td>
+              <td className="py-2 px-4">
+                {editingProperty === property._id ? (
+                  <select
+                    value={newProperty.listing_type}
+                    onChange={(e) =>
+                      setNewProperty({
+                        ...newProperty,
+                        listing_type: e.target.value,
+                      })
+                    }
+                  >
+                    <option value="sell">sell</option>
+                    <option value="rent">rent</option>
+                  </select>
+                ) : (
+                  property.listing_type
+                )}
+              </td>
+              <td className="py-2 px-4">
+                {editingProperty === property._id ? (
+                  <>
+                    <button
+                      className="bg-green-500 text-white rounded-lg px-2"
+                      onClick={() => handleUpdate(property._id)}
+                    >
+                      Update
+                    </button>
+                    <button
+                      className="bg-red-500 text-white rounded-lg px-2 ml-2"
+                      onClick={() => handleCancelEdit()}
+                    >
+                      Cancel
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <button
+                      className="bg-blue-500 text-white rounded-lg px-2"
+                      onClick={() => handleEdit(property)}
+                    >
+                      Edit
+                    </button>
+                    <button
+                      className="bg-red-500 text-white rounded-lg px-2 ml-2"
+                      onClick={() => deleteAlert(property._id)}
+                    >
+                      Delete
+                    </button>
+                  </>
+                )}
               </td>
             </tr>
           ))}

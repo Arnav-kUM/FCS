@@ -10,7 +10,7 @@ const Home = () => {
   const [recommendedProperties, setRecommendedProperties] = useState([]);
   const navigate = useNavigate();
   const {user} = useContext(AuthContext);
-
+  const token = localStorage.getItem('token');
   useEffect(() => {
     getRecommendedProperties();
   }, []);
@@ -18,9 +18,9 @@ const Home = () => {
   const getRecommendedProperties = async () => {
     try {
       const response = await axios.get(`http://localhost:3000/api/property/fetchavailablelistings`, {
-        params: {
-          userId: user.id // Send user.id as a query parameter
-        }
+        headers: {
+          'auth-token': token,
+        },
       });
       setRecommendedProperties(response.data);
     } catch (error) {

@@ -102,8 +102,8 @@ router.delete('/deleteproperty/:id', fetchuser, async (req, res) => {
 })
 
 // Route 4 update the listings of the logged in user || logged in required
-router.put('/updateproperty/:id', async (req, res) => {
-    const { title, description, image,price,listing_type,location } = req.body;
+router.put('/updateproperty/:id', fetchuser, async (req, res) => {
+    const { title, description, price,listing_type, location, status } = req.body;
     // const title = req.body
     // console.log(description);
     try {
@@ -112,14 +112,15 @@ router.put('/updateproperty/:id', async (req, res) => {
 
         if (title) { newProperty.title = title };
         if (description) { newProperty.description = description };
-        if (image) { newProperty.image = image };
+        if (location) { newProperty.location = location };
         if (price) { newProperty.price = price };
         if (listing_type) { newProperty.listing_type = listing_type };
+        if (status) { newProperty.status = status };
         
         // Find the Property to be updated and update it
         let property = await Property.findById(req.params.id);
         if (!property) { return res.status(404).send("Not Found") }
-        if (property.owner.toString() !== req.body.owner) {
+        if (property.owner.toString() !== req.user.id) {
             return res.status(401).send("Not Allowed");
         }
         property = await Property.findByIdAndUpdate(req.params.id, { $set: newProperty }, { new: true })
@@ -130,9 +131,9 @@ router.put('/updateproperty/:id', async (req, res) => {
     }
 })
 
-router.get('/fetchavailablelistings', async (req, res) => {
+router.get('/fetchavailablelistings',fetchuser, async (req, res) => {
   const { type } = req.query;
-  const userId = req.query.userId; // Retrieve user ID from query parameters
+  const userId = req.user.id; // Retrieve user ID from query parameters
 
   try {
     let query = { status: 'available', transacted: 'no' };
@@ -142,7 +143,7 @@ router.get('/fetchavailablelistings', async (req, res) => {
     }
 
     // Add the condition to filter out properties owned by the user
-    // query.owner = { $ne: userId };
+    query.owner = { $ne: userId };
 
     const properties = await Property.find(query);
     res.json(properties);
