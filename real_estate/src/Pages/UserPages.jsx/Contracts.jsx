@@ -8,6 +8,7 @@ const ContractsPage = () => {
   const [incomingContracts, setIncomingContracts] = useState([]);
   const [isModalOpen, setModalOpen] = useState(false);
   const { user } = useContext(AuthContext);
+  const [propertyStatus, setPropertyStatus] = useState({});
 
   const [verificationResult, setVerificationResult] = useState(null);
 
@@ -25,41 +26,53 @@ const ContractsPage = () => {
       // Handle errors, display a message, or perform additional actions
     }
   };
+
+  // ... Other code
+
   const fetchBuyerContracts = async () => {
     try {
-      const userId = user.id; // Assuming your user object has an 'id' property
+        const userId = user.id; // Assuming your user object has an 'id' property
+    
+        const response = await axios.post(
+          "http://localhost:3000/api/contract/buyer",
+          { buyerId: userId } // Send user ID in the request body
+        );
+    
+        if (response.status !== 200) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+    
+        const contracts = await response.data;
   
-      const response = await axios.post(
-        "http://localhost:3000/api/contract/buyer",
-        { buyerId: userId } // Send user ID in the request body
-      );
-  
-      if (response.status !== 200) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      }
-  
-      const contracts = await response.data;
-  
-      // Fetch property status for each contract
+
       const contractsWithData = await Promise.all(
         contracts.map(async (contract) => {
           const propertyStatusResponse = await axios.get(
             `http://localhost:3000/api/contract/checkSoldStatus/${contract._id}`
           );
           const isSold = propertyStatusResponse.data.isSold;
-  
+
+          // Update property status in the state
+          setPropertyStatus((prevStatus) => ({
+            ...prevStatus,
+            [contract._id]: isSold,
+          }));
+
           return {
             ...contract,
             isSold,
           };
         })
       );
-  
+        console.log
+      
+
       setOutgoingContracts(contractsWithData);
     } catch (error) {
       console.error(error);
     }
   };
+
 
   const fetchSellerContracts = async () => {
     try {
