@@ -16,7 +16,7 @@ function App() {
                 element={
                   <ProtectedRoute
                     element={<Login />}
-                    allowedRoles={[]}
+                    allowedRoles={["IIITD"]}
                   />
                 }
                 path="/login"
