@@ -87,19 +87,39 @@ router.get('/fetchmylistings', fetchuser, async (req, res) => {
 
 // Route 3 delete the listings of the logged in user || logged in required
 router.delete('/deleteproperty/:id', fetchuser, async (req, res) => {
+  console.log(req.params.id)
   try {
       let property = await Property.findById(req.params.id);
       if (!property) { return res.status(404).send("Not Found") }
       if (property.owner.toString() !== req.user.id) {
           return res.status(401).send("Not Allowed");
       }
-      property = await Property.findByIdAndDelete(req.params.id)
+      // property = await Property.findByIdAndDelete(req.params.id)
       res.json({ "Success": "Property has been deleted", property: property });
   } catch (error) {
       console.error(error.message);
       res.status(500).send("Internal Server Error");
   }
 })
+
+router.delete('/deletepropertybyadmin/:id', async (req, res) => {
+  console.log(req.params.id); // Use req.params.id instead of req.params.propertyId
+  try {
+    let property = await Property.findById(req.params.id);
+
+    if (!property) {
+      return res.status(404).send("Not Found");
+    }
+    // if (property.owner.toString() !== req.user.id) {
+    //   return res.status(401).send("Not Allowed");
+    // }
+    property = await Property.findByIdAndDelete(req.params.id)
+    res.json({ "Success": "Property has been deleted", property: property });
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).send("Internal Server Error");
+  }
+});
 
 // Route 4 update the listings of the logged in user || logged in required
 router.put('/updateproperty/:id', async (req, res) => {

@@ -4,6 +4,7 @@ const JWT_SECRET = 'armoni@Yu';
 const fetchuser = (req, res, next) => {
   const token = req.headers['auth-token'];
 
+
   if (!token) {
     return res.status(401).send({ error: "Please authenticate using a valid token" });
   }
