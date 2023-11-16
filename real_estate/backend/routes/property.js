@@ -142,7 +142,7 @@ router.get('/fetchavailablelistings', async (req, res) => {
     }
 
     // Add the condition to filter out properties owned by the user
-    query.owner = { $ne: userId };
+    // query.owner = { $ne: userId };
 
     const properties = await Property.find(query);
     res.json(properties);

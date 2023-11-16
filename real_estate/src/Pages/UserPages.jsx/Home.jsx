@@ -3,7 +3,6 @@ import { AiOutlineSearch } from 'react-icons/ai';
 import NavBar from '../NavBar';
 import { useNavigate } from "react-router-dom";
 import axios from 'axios';
-import PayButton from '../PayButton';
 import { useContext } from 'react';
 import AuthContext from '../../context/authContext';
 
@@ -51,7 +50,6 @@ const Home = () => {
             </button>
           </div>
         </div>
-        <PayButton/>
         <h1 className='font-bold text-2xl text-[#9041c1] mx-2 mt-4'>Recommended:</h1>
         <div className="flex flex-wrap justify-around mt-2">
           {recommendedProperties.map((property, index) => (

@@ -14,10 +14,11 @@ router.post('/newtransaction', async (req, res) => {
   try {
     const newOwner = req.body.userId;
     const propertyId = req.body.propertyId;
-    console.log(newOwner)
-    console.log(propertyId)
+    console.log("new owner of the property",newOwner)
+    console.log("property id in transaction",propertyId)
         let property = await Property.findById(propertyId);
         const CurOwner=property.owner
+        console.log("Current owner of property",CurOwner)
         if (property.status.toString() !== 'available') {
             console.log("asfsdfsdf");
             return res.status(401).send("Property not available");
@@ -33,7 +34,7 @@ router.post('/newtransaction', async (req, res) => {
         newProperty.owner=newOwner;
         newProperty.transacted = 'yes';
         if (!property) { return res.status(404).send("Not Found") }
-        property = await Property.findByIdAndUpdate(req.params.id, { $set: newProperty }, { new: true })
+        property = await Property.findByIdAndUpdate(propertyId, { $set: newProperty }, { new: true })
       res.send(transaction)
     } catch (error) {
       console.error(error.message);

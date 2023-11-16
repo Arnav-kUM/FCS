@@ -32,7 +32,7 @@ const contractSchema = new Schema({
     },
     status: {
         type: String,
-        enum: ['sent', 'accepted', 'rejected'],
+        enum: ['sent', 'accepted', 'rejected','completed'],
         default: 'sent', // Default status is 'sent'
         required: true,
     },

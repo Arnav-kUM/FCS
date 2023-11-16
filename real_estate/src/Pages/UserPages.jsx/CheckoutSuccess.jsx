@@ -18,7 +18,7 @@ const CheckoutSuccess = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ propertyId, userId: user.id }),
+        body: JSON.stringify({ propertyId:propertyId, userId: user.id }),
       })
         .then(response => response.json())
         .then(data => {
