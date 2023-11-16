@@ -5,12 +5,22 @@ import AuthState from "./context/authstate";
 import AdminPage from "./Pages/AdminPages/AdminPage";
 import UserPage from "./Pages/UserPages.jsx/UserPage";
 import ProtectedRoute from "./ProtectedRoutes";
+import Ekyc from "./Ekyc";
 function App() {
   return (
     <div className="mx-2">
       <AuthState>
         <Routes>
-          <Route element={<Login />} path="/"></Route>
+        <Route element={<Ekyc />} path="/"></Route>
+        <Route
+                element={
+                  <ProtectedRoute
+                    element={<Login />}
+                    allowedRoles={['IIITD']}
+                  />
+                }
+                path="/login"
+              />
           <Route element={<CreateUser />} path="/new-account"></Route>
           {/* <Route element={<AdminPage />} path="/admin/*"></Route>
           <Route element={<UserPage />} path="/user/*"></Route> */} 

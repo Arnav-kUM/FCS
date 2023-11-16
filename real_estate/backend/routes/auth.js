@@ -10,6 +10,8 @@ var fetchuser = require('../middleware/fetchuser');
 const JWT_SECRET = 'armoni@Yu';
 
 
+
+
 // ROUTE 1: Create a User using: POST "/api/auth/createuser". No login required
 router.post('/createuser', [
     body('name', 'Name must be atleast 3 characters').isLength({ min: 3 }),

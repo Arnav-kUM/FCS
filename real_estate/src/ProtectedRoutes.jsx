@@ -39,7 +39,6 @@ if (loading) {
     return element;
   } else {
     // Redirect to a login page or another route
-    console.log("fail")
     return <Navigate to="/" />;
   }
 };
